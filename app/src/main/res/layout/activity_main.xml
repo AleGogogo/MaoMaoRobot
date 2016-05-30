@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context="com.example.lyw.maomaorobot.MainActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/id_ly_top"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:gravity="center"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/top1_bg"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textColor="#ffffff"
+            android:textSize="22sp"
+            android:text="毛毛"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/id_ly_bottom"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="45dp">
+  <EditText
+      android:layout_marginLeft="8dp"
+      android:layout_marginRight="8dp"
+      android:layout_toLeftOf="@+id/id_but_send"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:id="@+id/id_edt_massage"
+
+      android:background="@drawable/login_edit_normal"/>
+  <Button
+      android:layout_width="60dp"
+      android:layout_height="60dp"
+      android:layout_alignParentRight="true"
+      android:id="@+id/id_but_send"
+      android:text="发送"
+      android:textSize="18sp"
+      android:background="@drawable/send_massage"/>
+    </RelativeLayout>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/id_listview"
+        android:divider="@null"
+        android:dividerHeight="5dp"
+        android:layout_above="@+id/id_ly_bottom"
+        android:layout_below="@+id/id_ly_top"></ListView>
+</RelativeLayout>
