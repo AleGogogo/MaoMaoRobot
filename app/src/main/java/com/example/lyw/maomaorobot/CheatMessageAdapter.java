@@ -9,13 +9,16 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.lyw.maomaorobot.Bean.CheatMessage;
-import com.example.lyw.maomaorobot.Bean.ReturnMsg;
+
+import com.example.lyw.maomaorobot.Bean.LinkMsg;
+import com.example.lyw.maomaorobot.Bean.NewsMsg;
+import com.example.lyw.maomaorobot.Bean.ReturnMessage;
+import com.example.lyw.maomaorobot.Bean.TextMsg;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static com.example.lyw.maomaorobot.Bean.ReturnMsg.*;
 
 /**
  * Created by LYW on 2016/5/28.
@@ -49,7 +52,7 @@ public class CheatMessageAdapter extends BaseAdapter{
     public int getItemViewType(int position) {
         Object object = mDates.get(position);
         int i=0;
-        if (object instanceof ReturnMsg){
+        if (object instanceof ReturnMessage){
             i++;
             Log.d("TAG","maomao 第 "+i +"次出现");
             return 0;
@@ -71,7 +74,7 @@ public class CheatMessageAdapter extends BaseAdapter{
        if (convertView ==null) {
            if (getItemViewType(position) == 0) {
                convertView = mInflater.inflate(R.layout.cheat_robot_layout, null);
-              mHolder = new ViewHolder();
+               mHolder = new ViewHolder();
                mHolder.msgText = (TextView) convertView.findViewById(R.id.id_tvt_cheat_robot);
                mHolder.showTimeText = (TextView) convertView.findViewById(R.id.id_tvt_timeshow);
 
@@ -86,7 +89,7 @@ public class CheatMessageAdapter extends BaseAdapter{
        }else{
            mHolder = (ViewHolder) convertView.getTag();
        }
-           if (message instanceof ReturnMsg) {
+           if (message instanceof ReturnMessage) {
                setDate(mDates.get(position),mHolder);
            }else if (message instanceof CheatMessage){
               setDate(mDates.get(position),mHolder);
@@ -102,13 +105,46 @@ public class CheatMessageAdapter extends BaseAdapter{
     private void setDate(Object object,ViewHolder holder) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         if (object instanceof CheatMessage) {
-            holder.showTimeText.setText(sdf.format(((CheatMessage) object).getDate()));
-
-            holder.msgText.setText(((CheatMessage) object).getMsg());
-        } else if (object instanceof ReturnMsg) {
             holder.showTimeText.setText(sdf.format(new Date()));
 
-            holder.msgText.setText(((ReturnMsg) object).getMeg());
+            holder.msgText.setText(((CheatMessage) object).getMsg());
+        } else {
+            if (object instanceof ReturnMessage) {
+                switch (typeConvertNumber((ReturnMessage)object)) {
+                    case 0:
+                        holder.showTimeText.setText((sdf.format(new Date())));
+
+                        holder.msgText.setText("出错了，我没有找到匹配的东西");
+                        break;
+                    case 1:  holder.showTimeText.setText((sdf.format(new Date())));
+
+                            holder.msgText.setText(((TextMsg) object).getmMsg());
+                        break;
+                    case 2:holder.showTimeText.setText(sdf.format(new Date()));
+
+                        holder.msgText.setText(((LinkMsg) object).getmMsg());
+                        break;
+                    case 3:holder.showTimeText.setText(sdf.format(new Date()));
+
+                        holder.msgText.setText(((NewsMsg) object).getmMsg());
+                }
+
+
+            }
         }
+    }
+    private int typeConvertNumber(ReturnMessage message){
+        int n = 0;
+        if (message instanceof TextMsg){
+            n=1;
+            return n;
+        }else if (message instanceof LinkMsg){
+            n=2;
+            return n ;
+        }else if (message instanceof NewsMsg){
+            n =3;
+            return n;
+        }
+        return 0;
     }
 }

@@ -3,7 +3,7 @@ package com.example.lyw.maomaorobot.Util;
 
 import android.util.Log;
 
-import com.example.lyw.maomaorobot.Bean.ReturnMsg;
+
 import com.example.lyw.maomaorobot.Bean.SendMsg;
 import com.google.gson.Gson;
 
@@ -29,7 +29,7 @@ public class HttpUtil {
             "http://www.tuling123.com/openapi/api";
     private static final String API_KRY = "e623da9baaedd093f67d0902d270bea8";
  private static final String TAG ="tulingRobot is saying";
-    public static void doPost(final String massage,final HttpCallbackListner listner) {
+       public static void doPost(final String massage,final HttpCallbackListner listner) {
 
         final StringBuffer sbf = new StringBuffer();
         new Thread(new Runnable() {
@@ -49,28 +49,30 @@ public class HttpUtil {
 
                     SendMsg sm = new SendMsg();
                     sm.setKey(API_KRY);
-                    String Info = URLEncoder.encode(massage,"utf-8");
-                    sm.setInfo(Info);
+                    //   String Info = URLEncoder.encode(massage);
+                    sm.setInfo(massage);
                     String msg =ParaseJson.convertJson(sm);
-                    // i can't confiuger these stream
-                    OutputStream out = connection.getOutputStream();
-                    DataOutputStream wr = new DataOutputStream(out);
-                    wr.writeBytes(msg);
-                    BufferedReader br = new BufferedReader(new InputStreamReader(
-                            connection.getInputStream(),"UTF-8"));
 
-                   String str = null;
+                    OutputStream out = connection.getOutputStream();
+                    //这里不用序列化
+                    //                 DataOutputStream wr = new DataOutputStream(out);
+                    out.write(msg.getBytes());
+                    out.flush();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(
+                            connection.getInputStream()));
+
+                    String str = null;
                     while ((str = br.readLine())!=null){
                         sbf.append(str);
                     }
 
-                      str = sbf.toString();
+                    str = sbf.toString();
 
                     Log.d("TAG","request message is"+str);
-                   // result =parseJson(str);
-                        br.close();
-                        out.close();
-                        wr.close();
+                    // result =parseJson(str);
+                    br.close();
+                    out.close();
+
                     if (listner!=null){
                         String result = sbf.toString();
 

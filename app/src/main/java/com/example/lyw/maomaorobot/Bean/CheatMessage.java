@@ -8,11 +8,14 @@ import java.util.Date;
 public class CheatMessage {
     private String name ;
     private String msg;
-    private Date date;
+    private String date;
     private Type type;
-   // private int code;
 
-    public CheatMessage(String msg, Type type, Date date) {
+    public CheatMessage(){
+
+    }
+
+    public CheatMessage(String msg, Type type, String date) {
 
         this.msg = msg;
         this.type = Type.OUTCOMING;
@@ -28,7 +31,7 @@ public class CheatMessage {
     }
 
     public enum Type{
-        INCOMING,OUTCOMING
+        INCOMING,OUTCOMING;
     }
 
     public String getName() {
@@ -47,11 +50,11 @@ public class CheatMessage {
         this.msg = msg;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 }

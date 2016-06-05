@@ -14,34 +14,35 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="right"
         android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/chatto_bg_normal"
+            android:gravity="center"
+            android:id="@+id/id_tvt_cheat_me"
+            android:text="hello"
+            android:textSize="18sp"
+            />
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:orientation="vertical">
     <ImageView
-        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:id="@+id/id_img_robot"
-        android:src="@drawable/icon"/>
+        android:id="@+id/id_img_me"
+        android:src="@drawable/me"/>
      <TextView
-         android:layout_width="48dp"
+         android:layout_width="match_parent"
          android:layout_height="wrap_content"
          android:gravity="center_horizontal"
          android:textSize="18sp"
-         android:text="毛毛"/>
+         android:text="小萌"/>
         </LinearLayout>
-       <TextView
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:background="@drawable/chatfrom_bg_normal"
-           android:gravity="center"
-           android:id="@+id/id_tvt_cheat_robot"
-           android:text="hello"
-           android:textColor="#000000"
-           android:textSize="18sp"
-           />
+
     </LinearLayout>
 </LinearLayout>

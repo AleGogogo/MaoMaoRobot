@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">MaoMaoRobot</string>
+    <string name="actionbar_search">搜索</string>
+    <string name="actionbar_add">更多</string>
+    <string name="actionbar_tianjia">添加</string>
+    <string name="actionbar_scan">扫一扫</string>
+    <string name="actionbar_feedback">反馈</string>
+    <string name="search_hint">输入要查找的内容</string>
 </resources>
