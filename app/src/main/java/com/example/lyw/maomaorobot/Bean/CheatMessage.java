@@ -10,9 +10,8 @@ public class CheatMessage {
     private String msg;
     private String date;
     private Type type;
-
     public CheatMessage(){
-
+       type = Type.OUTCOMING;
     }
 
     public CheatMessage(String msg, Type type, String date) {
@@ -56,5 +55,15 @@ public class CheatMessage {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    @Override
+    public String toString() {
+        return "CheatMessage{" +
+                "name='" + name + '\'' +
+                ", msg='" + msg + '\'' +
+                ", date='" + date + '\'' +
+                ", type=" + type +
+                '}';
     }
 }

@@ -2,6 +2,8 @@
 <manifest package="com.example.lyw.maomaorobot"
           xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,7 +12,8 @@
         android:theme="@android:style/Theme.Holo">
 
         <activity android:name=".MainActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+                 >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -22,6 +25,9 @@
             <meta-data android:name="android.app.searchable"
                        android:resource="@xml/searchable"/>
         </activity>
+
+    </application>
+    <application   android:name = "MyApplication">
 
     </application>
 </manifest>

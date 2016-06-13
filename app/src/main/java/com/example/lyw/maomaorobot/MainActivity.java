@@ -2,9 +2,9 @@ package com.example.lyw.maomaorobot;
 
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -16,17 +16,22 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.lyw.maomaorobot.Bean.BaseResponse;
+import com.example.lyw.maomaorobot.Bean.CaiPuResponse;
 import com.example.lyw.maomaorobot.Bean.CheatMessage;
-import com.example.lyw.maomaorobot.Bean.ReturnMessage;
+import com.example.lyw.maomaorobot.Bean.LinkResponse;
+import com.example.lyw.maomaorobot.Bean.NewsResponse;
 import com.example.lyw.maomaorobot.Bean.TextMsg;
+import com.example.lyw.maomaorobot.Bean.TextResponse;
 import com.example.lyw.maomaorobot.DB.DatabaseManager;
 import com.example.lyw.maomaorobot.Util.HttpUtil;
-import com.example.lyw.maomaorobot.Util.ParaseJson;
+import com.google.gson.Gson;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Objects;
 
 public class MainActivity extends Activity {
     private ArrayList<Object> mData;
@@ -34,6 +39,7 @@ public class MainActivity extends Activity {
     private CheatMessageAdapter mAapter;
     private EditText mEditMsg;
     private Button mSendButton;
+    private static final int MESSAGE_RESPONSE = 11;
     private static final int REQUEST_MAOMAO = 0;
     private static final int REQUEST_FAILED = 1;
     private MyHandler mHandler;
@@ -41,21 +47,29 @@ public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
 
 
+    private Gson mGson;
+
+
     class MyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case REQUEST_MAOMAO:
-                    //update listView
-                    Object o = (Object) msg.obj;
-                    mData.add(o);
+//                case REQUEST_MAOMAO:
+//                    //update listView
+//                    Object o = (Object) msg.obj;
+//                    mData.add(o);
+//                    mAapter.notifyDataSetChanged();
+//                    mListView.setSelection(mData.size() - 1);
+//                    break;
+//                case REQUEST_FAILED:
+//                    Toast.makeText(MainActivity.this, "Sorry Network is ill",
+//                            Toast.LENGTH_SHORT).show();
+//                    break;
+
+                case MESSAGE_RESPONSE:
                     mAapter.notifyDataSetChanged();
-                    mListView.setSelection(mData.size() - 1);
                     break;
-                case REQUEST_FAILED:
-                    Toast.makeText(MainActivity.this, "Sorry Network is ill",
-                            Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -66,10 +80,50 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         mHandler = new MyHandler();
         mManager = DatabaseManager.getIntance(MainActivity.this);
-        initView();
         initData();
+        initView();
         iniListener();
+        loadData();
 
+    }
+
+    private void initData() {
+        mData = new ArrayList<>();
+        // TODO: 2016/6/8 添加的假数据
+//        TextResponse textResponse = new TextResponse();
+//        textResponse.code = 100000;
+//        textResponse.text = "你好，毛毛为您服务";
+//        mData.add(textResponse);
+        mGson = new Gson();
+    }
+
+    private void initView() {
+        mListView = (ListView) findViewById(R.id.id_listview);
+        mEditMsg = (EditText) findViewById(R.id.id_edt_massage);
+        mSendButton = (Button) findViewById(R.id.id_but_send);
+        mAapter = new CheatMessageAdapter(this, mData);
+        mListView.setAdapter(mAapter);
+    }
+
+
+    private void loadData() {
+
+        if (mManager.loadCheatMessage().size() == 0) {
+            TextResponse textResponse = new TextResponse();
+            textResponse.code = 100000;
+            textResponse.text = "你好，毛毛为您服务";
+            mData.add(textResponse);
+            Log.d("TAG", ((TextResponse) mData.get(0)).getText());
+        } else {
+            //// TODO: 2016/6/13 做笔记
+//                mData.addAll(mManager.loadCheatMessage());
+            mData = mManager.loadCheatMessage();
+            mAapter.setmDates(mData);
+
+            Log.d(TAG, "loadData: [" + mData + "]");
+        }
+        //// TODO: 2016/6/13 看源码 
+        mAapter.notifyDataSetChanged();
     }
 
     private void iniListener() {
@@ -82,21 +136,56 @@ public class MainActivity extends Activity {
                             , Toast.LENGTH_SHORT).show();
                     return;
                 } else {
-                    CheatMessage toMessage = new CheatMessage(toMsg, CheatMessage
-
-                            .Type.OUTCOMING, (new Date()).toString());
+                    CheatMessage toMessage = new CheatMessage(toMsg,
+                            CheatMessage.Type.OUTCOMING, (new Date())
+                            .toString());
                     mData.add(toMessage);
                     mEditMsg.setText("");
-                    //        mListView.setSelection(mData.size()-1);
+                    mListView.setSelection(mData.size() - 1);
                 }
-                HttpUtil.doPost(toMsg, new HttpUtil.HttpCallbackListner() {
+                HttpUtil.doPost(toMsg, new HttpUtil.HttpCallbackListener() {
                     @Override
                     public void onSuccess(String response) {
-                        Object o = ParaseJson.parseJson(response);
+                        try {
+                            JSONObject jsonobject = new JSONObject(response);
+                            int code = jsonobject.getInt("code");
+                            switch (code) {
+                                case BaseResponse.RESPONSE_TYPE_TEXT:
 
+                                    TextResponse textResponse = mGson
+                                            .fromJson(response, TextResponse
+                                                    .class);
+                                    mData.add(textResponse);
+                                    break;
+                                case BaseResponse.RESPONSE_TYPE_LINK:
+                                    LinkResponse linkResponse = mGson
+                                            .fromJson(response, LinkResponse
+                                                    .class);
+                                    mData.add(linkResponse);
+
+                                    break;
+                                case BaseResponse.RESPONSE_TYPE_NEWS:
+                                    NewsResponse newsResponse = mGson
+                                            .fromJson(response, NewsResponse
+                                                    .class);
+                                    Log.d(TAG, "onSuccess: newsResponse[" +
+                                            newsResponse.getList() + "]");
+                                    mData.add(newsResponse);
+
+                                    break;
+                                case BaseResponse.RESPONSE_TYPE_CAIPU:
+                                    CaiPuResponse caiPuResponse = mGson
+                                            .fromJson(response, CaiPuResponse
+                                                    .class);
+                                    mData.add(caiPuResponse);
+                                    break;
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         Message message = mHandler.obtainMessage();
-                        message.obj = o;
-                        message.what = REQUEST_MAOMAO;
+                        message.what = MESSAGE_RESPONSE;
                         mHandler.sendMessage(message);
                     }
 
@@ -116,61 +205,18 @@ public class MainActivity extends Activity {
         });
     }
 
-    private void initView() {
-        mListView = (ListView) findViewById(R.id.id_listview);
-        mEditMsg = (EditText) findViewById(R.id.id_edt_massage);
-        mSendButton = (Button) findViewById(R.id.id_but_send);
-    }
-
-    private void initData() {
-        try {
-            if (mManager.laodReturnMsg().size()!=0||
-                    mManager.loadCheatMessage().size() != 0)
-            {
-                if (mManager.loadCheatMessage() != null&&mManager.laodReturnMsg().size()!=0)
-                {
-                    for (int i = 0; i < mManager.loadCheatMessage().size();
-                         i++) {
-                        mData.add(mManager.loadCheatMessage().get(i));
-                        mAapter = new CheatMessageAdapter(this, mData);
-                        mListView.setAdapter(mAapter);
-                    }
-                } else if (mManager.laodReturnMsg() != null&&mManager.laodReturnMsg().size()!=0)
-                {
-                    for (int i = 0; i < mManager.laodReturnMsg().size(); i++) {
-                        mData.add(mManager.laodReturnMsg().get(i));
-
-                    }
-                    mAapter = new CheatMessageAdapter(this, mData);
-                    mListView.setAdapter(mAapter);
-                }
-            } else {
-                mData = new ArrayList<Object>();
-                mData.add(new TextMsg(100000, "你好，毛毛为您服务", (new Date()).toString()));
-                Log.d("TAG", ((TextMsg) mData.get(0)).getmMsg());
-                mAapter = new CheatMessageAdapter(this, mData);
-                mListView.setAdapter(mAapter);
-            }
-        }catch (NullPointerException e){
-            Log.d("TAG",e.getMessage());
-        }
-
-        }
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //简直了，我是有多蠢！！！！
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.controllerbar,menu);
+        inflater.inflate(R.menu.controllerbar, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.id_actionbar_add:
 
                 break;
@@ -184,12 +230,14 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        for (int i = 0;i<mData.size();i++){
-            if (mData.get(i)instanceof CheatMessage){
-                mManager.saveCheatMsgData((CheatMessage)mData.get(i));
-            }else {
-                mManager.saveReturnMsgData((ReturnMessage)mData.get(i));
-            }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        for (int i = 0; i < mData.size(); i++) {
+            mManager.saveCheatMsgData(mData.get(i));
         }
+        super.onDestroy();
     }
 }

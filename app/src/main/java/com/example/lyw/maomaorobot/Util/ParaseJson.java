@@ -5,6 +5,7 @@ import android.util.Log;
 import com.example.lyw.maomaorobot.Bean.CheatMessage;
 import com.example.lyw.maomaorobot.Bean.LinkMsg;
 import com.example.lyw.maomaorobot.Bean.NewsMsg;
+import com.example.lyw.maomaorobot.Bean.ReturnMessage;
 import com.example.lyw.maomaorobot.Bean.SendMsg;
 import com.example.lyw.maomaorobot.Bean.TextMsg;
 import com.google.gson.Gson;
@@ -21,49 +22,53 @@ import java.util.List;
  * Created by LYW on 2016/5/28.
  */
 public class ParaseJson {
+    public static Gson gson = new Gson();
+
     public static String convertJson(SendMsg sm) {
-        Gson gson =new Gson();
+
         String jsonObject = gson.toJson(sm);
         return jsonObject;
     }
-    public static Object parseJson(String result)  {
+
+    public static Object parseJson(String result) {
         List<String> list = null;
 
         try {
-            JSONObject jsonobject =new JSONObject(result);
+            JSONObject jsonobject = new JSONObject(result);
             int code = jsonobject.getInt("code");
             String msg = jsonobject.getString("text");
-            if (jsonobject.has("url")){
-              String url = jsonobject.getString("url");
-                if (jsonobject.has("list")){
+            if (jsonobject.has("url")) {
+                String url = jsonobject.getString("url");
+                if (jsonobject.has("list")) {
                     JSONArray jsonArray = jsonobject.getJSONArray("list");
-                    for (int i = 0;i<jsonArray.length();i++){
-                    JSONObject jFather = jsonArray.getJSONObject(i);
-                    String address = jFather.getString("detailurl");
-                    list.add(address);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jFather = jsonArray.getJSONObject(i);
+                        String address = jFather.getString("detailurl");
+                        list.add(address);
                     }
-                   NewsMsg n = new NewsMsg();
+                    NewsMsg n = new NewsMsg();
+                    n.setContentType(ReturnMessage.CONTENT_TYPE_NEWS);
                     n.setmCode(code);
 //                    n.setmMsg(msg);
-                    StringBuilder sb =new StringBuilder();
+                    StringBuilder sb = new StringBuilder();
                     sb.append(msg);
-                 //   assert list != null;
-                    for (int k = 0; k<list.size(); k++){
+                    //   assert list != null;
+                    for (int k = 0; k < list.size(); k++) {
                         sb.append(list.get(k));
                     }
                     msg = sb.toString();
                     n.setmMsg(msg);
                     return n;
-                }else {
-                   LinkMsg l =  new LinkMsg();
+                } else {
+                    LinkMsg l = new LinkMsg();
                     l.setUrl(url);
                     l.setmCode(code);
-                    l.setmMsg(msg+url);
+                    l.setmMsg(msg + url);
                     return l;
                 }
 
-            }else {
-                TextMsg t =new TextMsg();
+            } else {
+                TextMsg t = new TextMsg();
                 t.setmMsg(msg);
                 t.setmCode(code);
                 return t;
@@ -74,8 +79,9 @@ public class ParaseJson {
         }
         return null;
     }
-    public static LinkMsg parseFromJson(String result){
-       LinkMsg link = new LinkMsg();
+
+    public static LinkMsg parseFromJson(String result) {
+        LinkMsg link = new LinkMsg();
         JSONObject jsonobject = null;
         try {
             jsonobject = new JSONObject(result);
@@ -88,6 +94,12 @@ public class ParaseJson {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-       return link;
+        return link;
     }
+
+//    public static Object parseFromGson(String result ,){
+//
+//        gson.fromJson(result);
+//
+//    }
 }
