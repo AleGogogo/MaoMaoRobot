@@ -27,7 +27,4 @@
         </activity>
 
     </application>
-    <application   android:name = "MyApplication">
-
-    </application>
 </manifest>

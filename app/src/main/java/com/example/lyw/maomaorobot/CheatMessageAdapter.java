@@ -240,10 +240,13 @@ public class CheatMessageAdapter extends BaseAdapter {
              CaiPuResponse caiPuResponse = (CaiPuResponse)response;
             List<CaiPuResponse.ListBean> list = caiPuResponse.getList();
               CaiPuResponse.ListBean bean = list.get(0);
-                View items = mInflater.inflate(R.layout.layout_item_caipu_message,null);
-                ImageView mIcon = (ImageView) items.findViewById(R.id.igv_caipu_item_icon);
-                TextView mTitle = (TextView) items.findViewById(R.id.txv_caipu_item_title);
-                TextView mInfo = (TextView) items.findViewById(R.id.txv_caipu_item_info);
+                //你仔细看看我上面是怎么写的。 你这句话不就相当于new了一个新的view
+            // 你给这个view赋值有什么用？他又不会添加到listview中去，真正添加进去的是parent吧！
+            // 另外，我上面是动态添加item的吧，因为你并不知道服务器会给你返回多少的item，so，还是仿照上面写吧
+//                View items = mInflater.inflate(R.layout.layout_item_caipu_message,null);
+                ImageView mIcon = (ImageView) parent.findViewById(R.id.igv_caipu_item_icon);
+                TextView mTitle = (TextView) parent.findViewById(R.id.txv_caipu_item_title);
+                TextView mInfo = (TextView) parent.findViewById(R.id.txv_caipu_item_info);
                 mIcon.setImageResource(R.mipmap.ic_launcher);
                 mTitle.setText(bean.getName());
                 Log.d("TAG","name is "+bean.getName());
