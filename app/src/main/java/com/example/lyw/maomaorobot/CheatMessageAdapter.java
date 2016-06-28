@@ -279,6 +279,7 @@ public class CheatMessageAdapter extends BaseAdapter {
             LinearLayout contanner = (LinearLayout) parent.findViewById(R.id.layout_caipu_container);
             List<CaiPuResponse.ListBean> list = caiPuResponse.getList();
 
+
             //你仔细看看我上面是怎么写的。 你这句话不就相当于new了一个新的view
             // 你给这个view赋值有什么用？他又不会添加到listview中去，真正添加进去的是parent吧！
             // 另外，我上面是动态添加item的吧，因为你并不知道服务器会给你返回多少的item，so，还是仿照上面写吧
@@ -292,6 +293,15 @@ public class CheatMessageAdapter extends BaseAdapter {
                 TextView mInfo = (TextView) item.findViewById(R.id.txv_caipu_item_info);
                 String imageUrl = bean.getIcon();
                 setImageIcon(imageUrl,mIcon);
+              CaiPuResponse.ListBean data = list.get(0);
+                //你仔细看看我上面是怎么写的。 你这句话不就相当于new了一个新的view
+            // 你给这个view赋值有什么用？他又不会添加到listview中去，真正添加进去的是parent吧！
+            // 另外，我上面是动态添加item的吧，因为你并不知道服务器会给你返回多少的item，so，还是仿照上面写吧
+                 CaiPuItemViewHolder caiPuItemViewHolder =new CaiPuItemViewHolder();
+                caiPuItemViewHolder.mIcon = (ImageView) parent.findViewById(R.id.igv_caipu_icon);
+               caiPuItemViewHolder.mTextViewTitle = (TextView) parent.findViewById(R.id.txv_caipu_item_title);
+               caiPuItemViewHolder.mTextViewInfo = (TextView) parent.findViewById(R.id.txv_caipu_item_info);
+                mIcon.setImageResource(R.mipmap.ic_launcher);
                 mTitle.setText(bean.getName());
                 mInfo.setText(bean.getInfo());
 
