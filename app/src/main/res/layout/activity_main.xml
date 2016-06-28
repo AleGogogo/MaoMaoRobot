@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context="com.example.lyw.maomaorobot.MainActivity">
+    tools:context=".Activity.MainActivity">
 
 
     <RelativeLayout
@@ -24,31 +24,31 @@
             android:textSize="22sp"
             android:text="毛毛"/>
     </RelativeLayout>
-    <RelativeLayout
+    <FrameLayout
         android:id="@+id/id_ly_bottom"
+        android:gravity="center"
         android:layout_alignParentBottom="true"
         android:background="@drawable/bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="45dp">
-  <EditText
-      android:layout_marginLeft="8dp"
-      android:layout_marginRight="8dp"
-      android:textColor="#000000"
-      android:layout_toLeftOf="@+id/id_but_send"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:id="@+id/id_edt_massage"
+        android:layout_height="45dp"
+       >
 
-      android:background="@drawable/login_edit_normal"/>
-  <Button
-      android:layout_width="60dp"
-      android:layout_height="60dp"
-      android:layout_alignParentRight="true"
-      android:id="@+id/id_but_send"
-      android:text="发送"
-      android:textSize="18sp"
-      android:background="@drawable/send_massage"/>
-    </RelativeLayout>
+        <ImageButton
+      android:layout_gravity="center"
+      android:layout_width="150dp"
+      android:layout_height="match_parent"
+      android:id="@+id/speak_but"
+      android:src="@drawable/bd_asr_mic"
+      />
+
+        <ProgressBar
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            style="?android:attr/progressBarStyle"
+            android:id="@+id/id_progressbar"
+            android:visibility="gone"
+            android:layout_gravity="center"/>
+    </FrameLayout>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

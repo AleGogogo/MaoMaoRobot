@@ -1,6 +1,9 @@
 package com.example.lyw.maomaorobot;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.lyw.maomaorobot.Activity.SecondActivity;
 import com.example.lyw.maomaorobot.Bean.BaseResponse;
 import com.example.lyw.maomaorobot.Bean.CaiPuResponse;
 import com.example.lyw.maomaorobot.Bean.CheatMessage;
@@ -17,6 +21,10 @@ import com.example.lyw.maomaorobot.Bean.CheatMessage;
 import com.example.lyw.maomaorobot.Bean.LinkResponse;
 import com.example.lyw.maomaorobot.Bean.NewsResponse;
 import com.example.lyw.maomaorobot.Bean.TextResponse;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.ImageSize;
+import com.nostra13.universalimageloader.core.listener
+        .SimpleImageLoadingListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,9 +39,10 @@ public class CheatMessageAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private ArrayList mDates;
     private static final String TAG = "CheatMessageAdapter";
-
+    private Context mContext;
 
     public CheatMessageAdapter(Context context, ArrayList list) {
+        mContext = context;
         mInflater = LayoutInflater.from(context);
         mDates = list;
     }
@@ -54,9 +63,9 @@ public class CheatMessageAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        if(mDates.get(position) instanceof CheatMessage){
+        if (mDates.get(position) instanceof CheatMessage) {
             return 0;
-        }else
+        } else
             return 1;
     }
 
@@ -79,11 +88,11 @@ public class CheatMessageAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup) {
         Log.d(TAG, "getView: ...");
-        if (getItemViewType(position)==0){
-          View  itemView = mInflater.inflate(R.layout.cheat_me_layout,null);
-            new CheatMessageViewHodler(itemView,(CheatMessage)mDates.get(position));
+        if (getItemViewType(position) == 0) {
+            View itemView = mInflater.inflate(R.layout.cheat_me_layout, null);
+            new CheatMessageViewHodler(itemView, (CheatMessage) mDates.get(position));
             return itemView;
-        }else {
+        } else {
             BaseResponse response = (BaseResponse) mDates.get(position);
             return initViewHolder(response.getCode(), position);
         }
@@ -149,8 +158,8 @@ public class CheatMessageAdapter extends BaseAdapter {
                 new CaiPuResponseViewHolder(itemView, (BaseResponse) mDates
                         .get(position));
                 break;
-//            default:
-//                break;
+            default:
+                break;
 
         }
         itemView.setTag(mDates.get(position));
@@ -178,12 +187,15 @@ public class CheatMessageAdapter extends BaseAdapter {
 
     class LinkResponseViewHolder extends TextResponseViewHodler {
         public TextView mUrl;
+
         public LinkResponseViewHolder(View parent, BaseResponse response) {
             super(parent, response);
             LinkResponse linkResponse = (LinkResponse) response;
             mUrl = (TextView) parent.findViewById(R.id
                     .txv_list_view_message_url_link);
+
             mUrl.setText(linkResponse.getUrl());
+            jumpTo(mUrl,response);
         }
 
     }
@@ -204,7 +216,7 @@ public class CheatMessageAdapter extends BaseAdapter {
             LinearLayout container = (LinearLayout) parent.findViewById(R.id
                     .layout_news_container);
             List<NewsResponse.ListBean> list = newsResponse.getList();
-            for (NewsResponse.ListBean bean : list) {
+            for (final NewsResponse.ListBean bean : list) {
                 View item = mInflater.inflate(R.layout
                         .layout_item_news_item, null);
                 ImageView igv = (ImageView) item.findViewById(R.id
@@ -215,6 +227,8 @@ public class CheatMessageAdapter extends BaseAdapter {
                 igv.setImageResource(R.mipmap.ic_launcher);
                 txv.setText(bean.getArticle());
                 // TODO: 2016/6/7 设定跳转
+                jumpTo(txv,bean);
+
                 LinearLayout.LayoutParams params = new LinearLayout
                         .LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -223,6 +237,29 @@ public class CheatMessageAdapter extends BaseAdapter {
                 container.addView(item, params);
             }
         }
+    }
+
+    private void jumpTo(TextView textview,final Object o) {
+
+        textview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final  String jumpUrl;
+                if (o instanceof LinkResponse) {
+                    jumpUrl   = ((LinkResponse)o).getUrl();
+                }else if (o instanceof CaiPuResponse.ListBean){
+                    jumpUrl   = ((CaiPuResponse.ListBean)o)
+                            .getDetailurl();
+                }else {
+                    jumpUrl   = ((NewsResponse.ListBean)o)
+                            .getDetailurl();
+                }
+                Uri url = Uri.parse(jumpUrl);
+                Intent i = new Intent(mContext, SecondActivity.class);
+                i.setData(url);
+                mContext.startActivity(i);
+            }
+        });
     }
 
     class CaiPuResponseViewHolder extends TextResponseViewHodler {
@@ -234,24 +271,40 @@ public class CheatMessageAdapter extends BaseAdapter {
             TextView mTextViewTitle;
             TextView mTextViewInfo;
         }
+
         public CaiPuResponseViewHolder(View parent, BaseResponse response) {
             super(parent, response);
             // TODO: 2016/6/7 可以参考上面
-             CaiPuResponse caiPuResponse = (CaiPuResponse)response;
+            CaiPuResponse caiPuResponse = (CaiPuResponse) response;
+            LinearLayout contanner = (LinearLayout) parent.findViewById(R.id.layout_caipu_container);
             List<CaiPuResponse.ListBean> list = caiPuResponse.getList();
-              CaiPuResponse.ListBean bean = list.get(0);
-                View items = mInflater.inflate(R.layout.layout_item_caipu_message,null);
-                ImageView mIcon = (ImageView) items.findViewById(R.id.igv_caipu_item_icon);
-                TextView mTitle = (TextView) items.findViewById(R.id.txv_caipu_item_title);
-                TextView mInfo = (TextView) items.findViewById(R.id.txv_caipu_item_info);
-                mIcon.setImageResource(R.mipmap.ic_launcher);
+
+            //你仔细看看我上面是怎么写的。 你这句话不就相当于new了一个新的view
+            // 你给这个view赋值有什么用？他又不会添加到listview中去，真正添加进去的是parent吧！
+            // 另外，我上面是动态添加item的吧，因为你并不知道服务器会给你返回多少的item，so，还是仿照上面写吧
+
+            // TODO: 2016/6/14 设置图标
+            for (CaiPuResponse.ListBean bean:list
+                 ) {
+                View item = mInflater.inflate(R.layout.layout_item_caipi_item,null);
+                final ImageView mIcon = (ImageView) item.findViewById(R.id.igv_caipu_icon);
+                TextView mTitle = (TextView) item.findViewById(R.id.txv_caipu_item_title);
+                TextView mInfo = (TextView) item.findViewById(R.id.txv_caipu_item_info);
+                String imageUrl = bean.getIcon();
+                setImageIcon(imageUrl,mIcon);
                 mTitle.setText(bean.getName());
-                Log.d("TAG","name is "+bean.getName());
                 mInfo.setText(bean.getInfo());
-                Log.d("TAG","info is "+bean.getInfo());
+
+                LinearLayout.LayoutParams params = new LinearLayout
+                        .LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+                contanner.addView(item,params);
             }
+
         }
     }
+
 
     class CheatMessageViewHodler {
 
@@ -269,4 +322,17 @@ public class CheatMessageAdapter extends BaseAdapter {
             mShowTime.setText(sdf.format(new Date(System.currentTimeMillis())));
         }
     }
+   private void setImageIcon(String url, final ImageView image){
+       ImageSize size = new ImageSize(70, 70);
+       ImageLoader.getInstance().loadImage(url, size, new SimpleImageLoadingListener() {
 
+           @Override
+           public void onLoadingComplete(String imageUri, View
+                   view, Bitmap loadedImage) {
+               super.onLoadingComplete(imageUri, view, loadedImage);
+               image.setImageBitmap(loadedImage);
+           }
+       });
+
+   }
+}
