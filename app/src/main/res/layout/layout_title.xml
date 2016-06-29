@@ -3,7 +3,7 @@
     android:id="@+id/id_ly_top"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
+    android:layout_height="@dimen/main_header_height"
     android:background="@drawable/top1_bg"
     android:gravity="center">
 

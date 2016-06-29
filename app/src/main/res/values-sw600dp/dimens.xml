@@ -5,8 +5,8 @@
 
 
     <!--v1.0 添加头部和底部样式 start-->
-    <dimen name="main_header_height">40dp</dimen>
-    <dimen name="main_bottom_height">50dp</dimen>
+    <dimen name="main_header_height">56dp</dimen>
+    <dimen name="main_bottom_height">77dp</dimen>
     <!--v1.0 添加头部和底部样式 end-->
 
 
