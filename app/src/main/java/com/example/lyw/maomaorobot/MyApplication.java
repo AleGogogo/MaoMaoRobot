@@ -13,8 +13,9 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        ImageLoaderConfiguration configuration = ImageLoaderConfiguration.
-                createDefault(this);
+        ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(this)
+                .writeDebugLogs()
+                .build();
         ImageLoader.getInstance().init(configuration);
     }
 }

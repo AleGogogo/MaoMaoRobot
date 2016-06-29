@@ -14,7 +14,6 @@ public class DBinfo {
     public static final String COLUMN_CHEAT_TYPE = "type";
     public static final String COLUMN_CHEAT_DATE = "date";
     public static final String COLUMN_CHEAT_URL = "url";
-    public static final String COLUMN_CHEAT_NEWS_LIST = "newslist";
     public static final String COLUMN_CHEAT_BEAN_KEY = "bean_key";
     public static final String COLUMN_CHEAT_ARTICLE = "article";
     public static final String COLUMN_CHEAT_DETAILURL = "detailurl";
@@ -22,7 +21,6 @@ public class DBinfo {
     public static final String COLUMN_CHEAT_INFO = "info";
     public static final String COLUMN_CHEAT_NAME = "name";
     public static final String COLUMN_CHEAT_SOURCE = "source";
-    public static final String COLUMN_CHEAT_CAIPU_LIST = "footbill";
     public static final String COLUMN_CHEAT_CODE = "code";
     public static final String COLUMN_CHEAT_ID = "id";
 
