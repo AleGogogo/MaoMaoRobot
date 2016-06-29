@@ -65,12 +65,12 @@
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
         </activity>
 
-<<<<<<< HEAD
         <activity android:name=".Activity.SecondActivity">
 
         </activity>
@@ -92,7 +92,4 @@
         </activity>
     </application>
 
-=======
-    </application>
->>>>>>> 446517a01effc41541af7d719402632ec1a7709e
 </manifest>
