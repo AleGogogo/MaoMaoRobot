@@ -1,4 +1,4 @@
-package com.example.lyw.maomaorobot;
+package com.baidu.yuyin;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+
+import com.example.lyw.maomaorobot.R;
 
 public class Setting extends PreferenceActivity implements Preference.OnPreferenceChangeListener {
 

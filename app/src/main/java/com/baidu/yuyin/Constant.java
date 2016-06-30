@@ -1,4 +1,4 @@
-package com.example.lyw.maomaorobot.info;
+package com.baidu.yuyin;
 
 /**
  * Created by LYW on 2016/6/15.

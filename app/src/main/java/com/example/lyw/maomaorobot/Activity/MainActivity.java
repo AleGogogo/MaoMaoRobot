@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.speech.RecognitionListener;
@@ -33,7 +32,7 @@ import com.example.lyw.maomaorobot.CheatMessageAdapter;
 import com.example.lyw.maomaorobot.DB.DatabaseManager;
 import com.example.lyw.maomaorobot.R;
 import com.example.lyw.maomaorobot.Util.HttpUtil;
-import com.example.lyw.maomaorobot.info.Constant;
+import com.baidu.yuyin.Constant;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -278,9 +277,12 @@ public class MainActivity extends Activity {
         intent.putExtra(Constant.SOUND_SUCCESS, R.raw.bdspeech_recognition_success);
         intent.putExtra(Constant.SOUND_ERROR, R.raw.bdspeech_recognition_error);
         intent.putExtra(Constant.SOUND_CANCEL, R.raw.bdspeech_recognition_cancel);
-        String path = Environment.getExternalStorageDirectory().getPath() + "/maomao/s_1";
-        Log.d("TAG", "path is " + path);
-        intent.putExtra(Constant.EXTRA_OFFLINE_ASR_BASE_FILE_PATH, path);
+
+        //输入语音文件，可以代替说话了
+
+//        String path = Environment.getExternalStorageDirectory().getPath() + "/maomao/s_1";
+//        Log.d("TAG", "path is " + path);
+//        intent.putExtra(Constant.EXTRA_OFFLINE_ASR_BASE_FILE_PATH, path);
         //    intent.putExtra(Constant.EXTRA_LICENSE_FILE_PATH, "/sdcard/easr/license-tmp-20150530.txt");
     }
 
