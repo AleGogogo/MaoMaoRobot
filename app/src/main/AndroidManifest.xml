@@ -9,11 +9,6 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
-
-    <!--  _____语音识别的权限_____   end-->
 
     <application
         android:name=".MyApplication"
@@ -35,10 +30,6 @@
         <meta-data
             android:name="com.baidu.speech.SECRET_KEY"
             android:value="3d1eb785d22e3ed719e54af3dce64073"/>
-
-        <service
-            android:name="com.baidu.speech.VoiceRecognitionService"
-            android:exported="false"/>
 
         <activity
             android:name="com.baidu.voicerecognition.android.ui.BaiduASRDigitalDialog"
@@ -64,6 +55,9 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name="com.baidu.speech.VoiceRecognitionService"
+            android:exported="false"/>
         <!--  _______语音识别相关______   end -->
 
 
@@ -82,5 +76,12 @@
         </activity>
 
     </application>
+
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <!--  _____语音识别的权限_____   end-->
+
+
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
 
 </manifest>

@@ -4,9 +4,11 @@ package com.example.lyw.maomaorobot.Activity;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
 import android.text.Editable;
@@ -23,18 +25,20 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.baidu.speech.VoiceRecognitionService;
+import com.baidu.yuyin.Constant;
 import com.example.lyw.maomaorobot.Bean.BaseResponse;
 import com.example.lyw.maomaorobot.Bean.CaiPuResponse;
 import com.example.lyw.maomaorobot.Bean.LinkResponse;
 import com.example.lyw.maomaorobot.Bean.NewsResponse;
 import com.example.lyw.maomaorobot.Bean.TextResponse;
+import com.example.lyw.maomaorobot.BuildConfig;
 import com.example.lyw.maomaorobot.CheatMessageAdapter;
 import com.example.lyw.maomaorobot.DB.DatabaseManager;
 import com.example.lyw.maomaorobot.R;
 import com.example.lyw.maomaorobot.Util.HttpUtil;
-import com.baidu.yuyin.Constant;
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -153,35 +157,13 @@ public class MainActivity extends Activity {
     private void iniListener() {
 
         initSwitchImageViewListener();
+
         mButtonVoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent();
                 bindParams(intent);
                 mSpeechRecognizer.startListening(intent);
-//                while (toMsg.equals("")){
-//                    mSpeakingButton.setVisibility(View.GONE);
-//                    mProgressBar.setVisibility(View.VISIBLE);
-//                }
-//                CheatMessage toMessage = new CheatMessage(toMsg,
-//                            CheatMessage.Type.OUTCOMING, (new Date())
-//                            .toString());
-//                    mData.add(toMessage);
-//
-//                mListView.setSelection(mData.size() - 1);
-//            }
-//        });
-//        mSendButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                final String toMsg = mEditMsg.getText().toString();
-//                if (TextUtils.isEmpty(toMsg)) {
-//                    Toast.makeText(MainActivity.this, "不可以发空信息"
-//                            , Toast.LENGTH_SHORT).show();
-//                    return;
-//                } else {
-//
-//                }
             }
         });
 
@@ -270,34 +252,129 @@ public class MainActivity extends Activity {
         mEditTextInput.setText("");
     }
 
+    /**
+     * @param intent
+     */
     private void bindParams(Intent intent) {
+        SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
 
-        intent.putExtra(Constant.SOUND_START, R.raw.bdspeech_recognition_start);
-        intent.putExtra(Constant.SOUND_END, R.raw.bdspeech_speech_end);
-        intent.putExtra(Constant.SOUND_SUCCESS, R.raw.bdspeech_recognition_success);
-        intent.putExtra(Constant.SOUND_ERROR, R.raw.bdspeech_recognition_error);
-        intent.putExtra(Constant.SOUND_CANCEL, R.raw.bdspeech_recognition_cancel);
+        if (defaultSharedPreferences.getBoolean("tips_sound", true)) {
+            intent.putExtra(Constant.SOUND_START, R.raw.bdspeech_recognition_start);
+            intent.putExtra(Constant.SOUND_END, R.raw.bdspeech_speech_end);
+            intent.putExtra(Constant.SOUND_SUCCESS, R.raw.bdspeech_recognition_success);
+            intent.putExtra(Constant.SOUND_ERROR, R.raw.bdspeech_recognition_error);
+            intent.putExtra(Constant.SOUND_CANCEL, R.raw.bdspeech_recognition_cancel);
+        }
 
-        //输入语音文件，可以代替说话了
+        //获取Setting页面设置参数
+        {
+            /*输入语音文件，可以代替说话了*/
+            if (defaultSharedPreferences.contains(Constant.EXTRA_INFILE)) {
+                String inputFilePath = defaultSharedPreferences.getString(Constant.EXTRA_INFILE, "").replaceAll(",.*", "").trim();
+                Log.d(TAG, "bindParams: inputFilePath = [" + inputFilePath + "]");
+                intent.putExtra(Constant.EXTRA_INFILE, inputFilePath);
+            }
 
-//        String path = Environment.getExternalStorageDirectory().getPath() + "/maomao/s_1";
-//        Log.d("TAG", "path is " + path);
-//        intent.putExtra(Constant.EXTRA_OFFLINE_ASR_BASE_FILE_PATH, path);
-        //    intent.putExtra(Constant.EXTRA_LICENSE_FILE_PATH, "/sdcard/easr/license-tmp-20150530.txt");
+            /*保存录音*/
+            if (defaultSharedPreferences.getBoolean(Constant.EXTRA_OUTFILE, false)) {
+                intent.putExtra(Constant.EXTRA_OUTFILE, "sdcard/outfile.pcm");
+            }
+
+            /*采样率*/
+            if (defaultSharedPreferences.contains(Constant.EXTRA_SAMPLE)) {
+                String tmp = defaultSharedPreferences.getString(Constant.EXTRA_SAMPLE, "").replaceAll(",.*", "").trim();
+                if (null != tmp && !"".equals(tmp)) {
+                    intent.putExtra(Constant.EXTRA_SAMPLE, Integer.parseInt(tmp));
+                }
+            }
+
+            /*语种*/
+            if (defaultSharedPreferences.contains(Constant.EXTRA_LANGUAGE)) {
+                String tmp = defaultSharedPreferences.getString(Constant.EXTRA_LANGUAGE, "").replaceAll(",.*", "").trim();
+                if (null != tmp && !"".equals(tmp)) {
+                    intent.putExtra(Constant.EXTRA_LANGUAGE, tmp);
+                }
+            }
+
+            /*语义解析*/
+            if (defaultSharedPreferences.contains(Constant.EXTRA_NLU)) {
+                String tmp = defaultSharedPreferences.getString(Constant.EXTRA_NLU, "").replaceAll(",.*", "").trim();
+                if (null != tmp && !"".equals(tmp)) {
+                    intent.putExtra(Constant.EXTRA_NLU, tmp);
+                }
+            }
+
+            /*VAD*/
+            if (defaultSharedPreferences.contains(Constant.EXTRA_VAD)) {
+                String tmp = defaultSharedPreferences.getString(Constant.EXTRA_VAD, "").replaceAll(",.*", "").trim();
+                if (null != tmp && !"".equals(tmp)) {
+                    intent.putExtra(Constant.EXTRA_VAD, tmp);
+                }
+            }
+
+            /*垂直领域*/
+            String prop = null;
+            if (defaultSharedPreferences.contains(Constant.EXTRA_PROP)) {
+                String tmp = defaultSharedPreferences.getString(Constant.EXTRA_PROP, "").replaceAll(",.*", "").trim();
+                if (null != tmp && !"".equals(tmp)) {
+                    intent.putExtra(Constant.EXTRA_PROP, Integer.parseInt(tmp));
+                    prop = tmp;
+                }
+            }
+
+            // offline asr
+            {
+                intent.putExtra(Constant.EXTRA_OFFLINE_ASR_BASE_FILE_PATH, "/sdcard/easr/s_1");
+                if (null != prop) {
+                    int propInt = Integer.parseInt(prop);
+                    if (propInt == 10060) {
+                        intent.putExtra(Constant.EXTRA_OFFLINE_LM_RES_FILE_PATH, "/sdcard/easr/s_2_Navi");
+                    } else if (propInt == 20000) {
+                        intent.putExtra(Constant.EXTRA_OFFLINE_LM_RES_FILE_PATH, "/sdcard/easr/s_2_InputMethod");
+                    }
+                }
+                intent.putExtra(Constant.EXTRA_OFFLINE_SLOT_DATA, buildTestSlotData()); // TODO: 2016/6/30 未查到此参数含义！
+            }
+        }
+
     }
 
+    private String buildTestSlotData() {
+        JSONObject slotData = new JSONObject();
+        JSONArray name = new JSONArray().put("李涌泉").put("郭下纶");
+        JSONArray song = new JSONArray().put("七里香").put("发如雪");
+        JSONArray artist = new JSONArray().put("周杰伦").put("李世龙");
+        JSONArray app = new JSONArray().put("手机百度").put("百度地图");
+        JSONArray usercommand = new JSONArray().put("关灯").put("开门");
+        try {
+            slotData.put(Constant.EXTRA_OFFLINE_SLOT_NAME, name);
+            slotData.put(Constant.EXTRA_OFFLINE_SLOT_SONG, song);
+            slotData.put(Constant.EXTRA_OFFLINE_SLOT_ARTIST, artist);
+            slotData.put(Constant.EXTRA_OFFLINE_SLOT_APP, app);
+            slotData.put(Constant.EXTRA_OFFLINE_SLOT_USERCOMMAND, usercommand);
+        } catch (JSONException e) {
+
+        }
+        return slotData.toString();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.id_actionbar_add:
-
+            case R.id.id_actionbar_voice_settings: //语音设定按钮
+                OnMenuVoiceSettingClick();
                 break;
+
             case R.id.id_actionbar_search:
+
                 break;
         }
         return super.onOptionsItemSelected(item);
 
+    }
+
+    private void OnMenuVoiceSettingClick() {
+        startActivity(new Intent("com.example.lyw.maomaorobot.setting"));
     }
 
     @Override
@@ -409,12 +486,11 @@ public class MainActivity extends Activity {
             Log.d("TAG", "onEndOfSpeech----->");
         }
 
-
         @Override
-        public void onError(int i) {
+        public void onError(int error) {
             Log.d("TAG", "onError------>");
             StringBuilder sb = new StringBuilder();
-            switch (i) {
+            switch (error) {
                 case SpeechRecognizer.ERROR_AUDIO:
                     sb.append("音频问题");
                     break;
@@ -443,7 +519,7 @@ public class MainActivity extends Activity {
                     sb.append("连接超时");
                     break;
             }
-            sb.append(":" + i);
+            sb.append(":" + error);
             Toast.makeText(MainActivity.this,
                     "error is :" + sb, Toast.LENGTH_SHORT).show();
         }
