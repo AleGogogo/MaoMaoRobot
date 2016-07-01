@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by LYW on 2016/6/7.
  */
-public class CaiPuResponse extends TextResponse {
+public class NewsResponseMessage extends TextResponseMessage {
 
     public List<ListBean> list;
 
@@ -18,25 +18,36 @@ public class CaiPuResponse extends TextResponse {
     }
 
     public static class ListBean {
-        public String name;
+        public String article;
+        public String source;
         public String icon;
-        public String info;
         public String detailurl;
 
-        public ListBean(String name, String icon, String info, String
+        public ListBean() {
+        }
+
+        public ListBean(String article, String source, String icon, String
                 detailurl) {
-            this.name = name;
+            this.article = article;
+            this.source = source;
             this.icon = icon;
-            this.info = info;
             this.detailurl = detailurl;
         }
 
-        public String getName() {
-            return name;
+        public String getArticle() {
+            return article;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public void setArticle(String article) {
+            this.article = article;
+        }
+
+        public String getSource() {
+            return source;
+        }
+
+        public void setSource(String source) {
+            this.source = source;
         }
 
         public String getIcon() {
@@ -45,14 +56,6 @@ public class CaiPuResponse extends TextResponse {
 
         public void setIcon(String icon) {
             this.icon = icon;
-        }
-
-        public String getInfo() {
-            return info;
-        }
-
-        public void setInfo(String info) {
-            this.info = info;
         }
 
         public String getDetailurl() {
@@ -66,12 +69,11 @@ public class CaiPuResponse extends TextResponse {
         @Override
         public String toString() {
             return "ListBean{" +
-                    "name='" + name + '\'' +
-                    ", info='" + info + '\'' +
+                    "article='" + article + '\'' +
+                    ", source='" + source + '\'' +
                     ", icon='" + icon + '\'' +
                     ", detailurl='" + detailurl + '\'' +
                     '}';
         }
-        }
     }
-
+}

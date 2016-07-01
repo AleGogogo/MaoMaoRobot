@@ -26,16 +26,15 @@ import android.widget.Toast;
 
 import com.baidu.speech.VoiceRecognitionService;
 import com.baidu.yuyin.Constant;
-import com.example.lyw.maomaorobot.Bean.BaseResponse;
-import com.example.lyw.maomaorobot.Bean.CaiPuResponse;
-import com.example.lyw.maomaorobot.Bean.LinkResponse;
-import com.example.lyw.maomaorobot.Bean.NewsResponse;
-import com.example.lyw.maomaorobot.Bean.TextResponse;
-import com.example.lyw.maomaorobot.BuildConfig;
+import com.example.lyw.maomaorobot.Bean.SendMessage;
+import com.example.lyw.maomaorobot.Bean.TextResponseMessage;
+import com.example.lyw.maomaorobot.Bean.TulingMessage;
 import com.example.lyw.maomaorobot.CheatMessageAdapter;
 import com.example.lyw.maomaorobot.DB.DatabaseManager;
+import com.example.lyw.maomaorobot.Profile;
 import com.example.lyw.maomaorobot.R;
-import com.example.lyw.maomaorobot.Util.HttpUtil;
+import com.example.lyw.maomaorobot.Util.CommonUtils;
+import com.example.lyw.maomaorobot.Util.HttpEngine;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -51,52 +50,36 @@ import java.util.Arrays;
 public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
 
-    private ArrayList<Object> mData;
+    /*handler消息类型 ,用于鉴别服务器返回消息状态*/
+    public static final int HANDLER_MESSAGE_RESPONSE_SUCCESS = 1001;
+    public static final int HANDLER_MESSAGE_RESPONSE_FAILED = 1002;
+
+    private ArrayList<TulingMessage> mData;
     private ListView mListView;
     private CheatMessageAdapter mAapter;
-    private EditText mEditMsg;
-    private Button mSendButton;
-    private static final int MESSAGE_RESPONSE = 11;
-    private static final int REQUEST_ME = 12;
-    private static final int REQUEST_FAILED = 1;
-    private MyHandler mHandler;
-    private DatabaseManager mManager;
+    private responseHandler mHandler;
 
+    private DatabaseManager mManager;
 
     /*底部区域*/
     private Button mButtonVoice;
     private ImageView mImageViewVoice;
     private ImageView mImageViewKeyboard;
     private EditText mEditTextInput;
+
     private Button mButtonSend; //发送按钮
 
-
-    /*状态位*/
+    /*状态区*/
     boolean isVoiceInput = false;
 
     private SpeechRecognizer mSpeechRecognizer;
-    private String toMsg;
 
-    private Gson mGson;
-
-
-    class MyHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case MESSAGE_RESPONSE:
-                    mAapter.notifyDataSetChanged();
-                    break;
-            }
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mHandler = new MyHandler();
+        mHandler = new responseHandler();
         mManager = DatabaseManager.getIntance(MainActivity.this);
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this, new ComponentName(
                 this, VoiceRecognitionService.class));
@@ -104,19 +87,17 @@ public class MainActivity extends Activity {
         initData();
         initView();
         iniListener();
-        loadData();
+//        loadData();
 
     }
-
 
     private void initData() {
         mData = new ArrayList<>();
         // TODO: 2016/6/8 添加的假数据
-//        TextResponse textResponse = new TextResponse();
-//        textResponse.code = 100000;
-//        textResponse.text = "你好，毛毛为您服务";
-//        mData.add(textResponse);
-        mGson = new Gson();
+        TextResponseMessage textResponseMessage = new TextResponseMessage();
+        textResponseMessage.setCode(100000);
+        textResponseMessage.setText("你好，毛毛为你服务！");
+        mData.add(textResponseMessage);
     }
 
     private void initView() {
@@ -127,31 +108,24 @@ public class MainActivity extends Activity {
         mButtonSend = (Button) findViewById(R.id.btn_message_send);
 
         mListView = (ListView) findViewById(R.id.id_listview);
-        mEditMsg = (EditText) findViewById(R.id.id_edt_massage);
-        mSendButton = (Button) findViewById(R.id.id_but_send);
         mAapter = new CheatMessageAdapter(this, mData);
         mListView.setAdapter(mAapter);
     }
 
 
     private void loadData() {
-
-        if (mManager.loadCheatMessage().size() == 0) {
-            TextResponse textResponse = new TextResponse();
-            textResponse.code = 100000;
-            textResponse.text = "你好，毛毛为您服务";
-            mData.add(textResponse);
-            Log.d("TAG", ((TextResponse) mData.get(0)).getText());
-        } else {
-            // TODO: 2016/6/13 做笔记
-//                mData.addAll(mManager.loadCheatMessage());
-            mData = mManager.loadCheatMessage();
-            mAapter.setmDates(mData);
-
-            Log.d(TAG, "loadData: [" + mData + "]");
-        }
-        //// TODO: 2016/6/13 看源码 
-        mAapter.notifyDataSetChanged();
+//
+//        if (mManager.loadCheatMessage().size() == 0) {
+//            TextResponseMessage textResponse = new TextResponseMessage();
+//            textResponse.code = 100000;
+//            textResponse.text = "你好，毛毛为您服务";
+//            mData.add(textResponse);
+//            Log.d("TAG", ((TextResponseMessage) mData.get(0)).getText());
+//        } else {
+//            // TODO: 2016/6/13 做笔记
+//            mAapter.setDates(mData);
+//            Log.d(TAG, "loadData: [" + mData + "]");
+//        }
     }
 
     private void iniListener() {
@@ -172,10 +146,24 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 if (isEmpty())
                     return;
-                sendPostMessage(mEditTextInput.getText().toString());
-                clearInput();
+                String input = mEditTextInput.getText().toString();
+                handleInput(input);
             }
         });
+    }
+
+
+    /**
+     * 将发送的消息插入到Listview中,并获取服务器返回
+     */
+    private void handleInput(String input) {
+        SendMessage message = new SendMessage(input);
+        mData.add(message);
+        mAapter.notifyDataSetChanged();
+        CommonUtils.moveListToLastPosition(mListView);
+        clearInput();
+        /*获取服务器返回*/
+        postMessage(message);
     }
 
     private void initSwitchImageViewListener() {
@@ -388,73 +376,64 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-
     }
 
     @Override
     protected void onDestroy() {
         for (int i = 0; i < mData.size(); i++) {
-            mManager.saveCheatMsgData(mData.get(i));
+//            mManager.saveCheatMsgData(mData.get(i));
         }
         mSpeechRecognizer.destroy();
         super.onDestroy();
     }
 
 
-    public void sendPostMessage(String message) {
-        HttpUtil.doPost(message, new HttpUtil.HttpCallbackListener() {
+    /**
+     * 获取返回消息
+     *
+     * @param sendMessage
+     */
+    public void postMessage(SendMessage sendMessage) {
+
+        String sendMessageJson = new Gson().toJson(sendMessage);//序列化发送消息对象为josn串
+
+        HttpEngine.doPost(Profile.API_ROBOT_URL, sendMessageJson, new HttpEngine.HttpCallbackListener() {
             @Override
             public void onSuccess(String response) {
-                try {
-                    JSONObject jsonobject = new JSONObject(response);
-                    int code = jsonobject.getInt("code");
-                    switch (code) {
-                        case BaseResponse.RESPONSE_TYPE_TEXT:
-
-                            TextResponse textResponse = mGson
-                                    .fromJson(response, TextResponse
-                                            .class);
-                            mData.add(textResponse);
-                            break;
-                        case BaseResponse.RESPONSE_TYPE_LINK:
-                            LinkResponse linkResponse = mGson
-                                    .fromJson(response, LinkResponse
-                                            .class);
-                            mData.add(linkResponse);
-
-                            break;
-                        case BaseResponse.RESPONSE_TYPE_NEWS:
-                            NewsResponse newsResponse = mGson
-                                    .fromJson(response, NewsResponse
-                                            .class);
-                            Log.d(TAG, "onSuccess: newsResponse[" +
-                                    newsResponse.getList() + "]");
-                            mData.add(newsResponse);
-
-                            break;
-                        case BaseResponse.RESPONSE_TYPE_CAIPU:
-                            CaiPuResponse caiPuResponse = mGson
-                                    .fromJson(response, CaiPuResponse
-                                            .class);
-                            mData.add(caiPuResponse);
-                            break;
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                mData.add(HttpEngine.serializeResponse(response));
                 Message message = mHandler.obtainMessage();
-                message.what = MESSAGE_RESPONSE;
+                message.what = HANDLER_MESSAGE_RESPONSE_SUCCESS;
                 mHandler.sendMessage(message);
             }
 
             @Override
-            public void onFailed(Exception e) {
+            public void onFailed(String errorMessage) {
                 Message message = mHandler.obtainMessage();
-                message.what = REQUEST_FAILED;
+                message.what = HANDLER_MESSAGE_RESPONSE_FAILED;
+                message.obj = errorMessage;
                 mHandler.sendMessage(message);
             }
+
         });
+    }
+
+    /**
+     * 在UI线程中处理服务器返回消息
+     */
+    class responseHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case HANDLER_MESSAGE_RESPONSE_SUCCESS:
+                    mAapter.notifyDataSetChanged();
+                    CommonUtils.moveListToLastPosition(mListView);
+                    break;
+                case HANDLER_MESSAGE_RESPONSE_FAILED:
+                    String errorMessage = (String) msg.obj;
+                    Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                    break;
+            }
+        }
     }
 
     class CustomRecognitionListener implements RecognitionListener {
@@ -530,8 +509,7 @@ public class MainActivity extends Activity {
             ArrayList<String> data = bundle.getStringArrayList("results_recognition");
             //mLog.setText(Arrays.toString(data.toArray(new String[data.size()])));
             Log.d("TAG", "data is " + Arrays.toString(data.toArray(new String[data.size()])));
-            toMsg = data.get(0);
-
+//            toMsg = data.get(0);
         }
 
         @Override

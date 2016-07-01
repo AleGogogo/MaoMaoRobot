@@ -1,12 +1,9 @@
 package com.example.lyw.maomaorobot.Bean;
 
-import java.util.Date;
-import java.util.List;
-
 /**
  * Created by LYW on 2016/6/7.
  */
-public class BaseResponse {
+public class BaseResponseMessage extends TulingMessage {
 
     public static final int RESPONSE_TYPE_TEXT = 100000;
     public static final int RESPONSE_TYPE_LINK = 200000;
@@ -16,6 +13,11 @@ public class BaseResponse {
     public int code;
 
     public String mDate;
+
+
+    public BaseResponseMessage() {
+        this.setMessageType(TYPE_MESSAGE_RECEIVE);
+    }
 
     public String getDate() {
         return mDate;
@@ -35,8 +37,8 @@ public class BaseResponse {
 
     public Type mType = Type.INCOMING;
 
-    public enum Type{
-        INCOMING,OUTCOMING;
+    public enum Type {
+        INCOMING, OUTCOMING;
     }
 
     public Type getmType() {
@@ -49,7 +51,7 @@ public class BaseResponse {
 
     @Override
     public String toString() {
-        return "BaseResponse{" +
+        return "BaseResponseMessage{" +
                 "code=" + code +
                 ", mDate='" + mDate + '\'' +
                 ", mType=" + mType +

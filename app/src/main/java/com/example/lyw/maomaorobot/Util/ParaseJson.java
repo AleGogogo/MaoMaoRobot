@@ -1,21 +1,16 @@
 package com.example.lyw.maomaorobot.Util;
 
-import android.util.Log;
-
-import com.example.lyw.maomaorobot.Bean.CheatMessage;
 import com.example.lyw.maomaorobot.Bean.LinkMsg;
 import com.example.lyw.maomaorobot.Bean.NewsMsg;
 import com.example.lyw.maomaorobot.Bean.ReturnMessage;
-import com.example.lyw.maomaorobot.Bean.SendMsg;
+import com.example.lyw.maomaorobot.Bean.SendMessage;
 import com.example.lyw.maomaorobot.Bean.TextMsg;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -24,7 +19,7 @@ import java.util.List;
 public class ParaseJson {
     public static Gson gson = new Gson();
 
-    public static String convertJson(SendMsg sm) {
+    public static String convertJson(SendMessage sm) {
 
         String jsonObject = gson.toJson(sm);
         return jsonObject;
