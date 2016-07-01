@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,7 +69,7 @@ public class MainActivity extends Activity {
     private Button mButtonSend; //发送按钮
 
     /*状态区*/
-    boolean isVoiceInput = false;
+    boolean isVoiceInput = true;
 
     private SpeechRecognizer mSpeechRecognizer;
 
@@ -130,12 +131,21 @@ public class MainActivity extends Activity {
 
         initSwitchImageViewListener();
 
-        mButtonVoice.setOnClickListener(new View.OnClickListener() {
+        mButtonVoice.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                bindParams(intent);
-                mSpeechRecognizer.startListening(intent);
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        Intent intent = new Intent();
+                        bindParams(intent);
+                        mSpeechRecognizer.startListening(intent);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        mSpeechRecognizer.stopListening();
+                        break;
+                }
+                return false;
             }
         });
 
@@ -166,16 +176,18 @@ public class MainActivity extends Activity {
 
     private void initSwitchImageViewListener() {
         /*设定语音按钮状态*/
-        mImageViewVoice.setOnClickListener(new View.OnClickListener() {
+        mImageViewKeyboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isVoiceInput) {
                     isVoiceInput = false;
-                    mButtonVoice.setVisibility(View.GONE);
+                    mImageViewVoice.setVisibility(View.VISIBLE);
+                    mImageViewKeyboard.setVisibility(View.GONE);
+
                     mEditTextInput.setVisibility(View.VISIBLE);
                     mEditTextInput.requestFocus();
-                    mImageViewKeyboard.setVisibility(View.VISIBLE);
-                    mImageViewVoice.setVisibility(View.INVISIBLE);
+
+                    mButtonVoice.setVisibility(View.GONE);
                     if (!isEmpty()) {
                         mButtonSend.setVisibility(View.VISIBLE);
                     }
@@ -183,16 +195,19 @@ public class MainActivity extends Activity {
             }
         });
 
-        mImageViewKeyboard.setOnClickListener(new View.OnClickListener() {
+        mImageViewVoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!isVoiceInput) {
                     isVoiceInput = true;
+                    mImageViewKeyboard.setVisibility(View.VISIBLE);
+                    mImageViewVoice.setVisibility(View.GONE);
+
                     mButtonVoice.setVisibility(View.VISIBLE);
+
+
                     mEditTextInput.setVisibility(View.GONE);
                     mButtonSend.setVisibility(View.GONE);
-                    mImageViewKeyboard.setVisibility(View.INVISIBLE);
-                    mImageViewVoice.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -447,7 +462,7 @@ public class MainActivity extends Activity {
         @Override
         public void onBeginningOfSpeech() {
             Log.d("TAG", "onBeginningOfSpeech-----> ");
-            mSpeechRecognizer.stopListening();
+//            mSpeechRecognizer.stopListening();
         }
 
         @Override
@@ -462,7 +477,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void onEndOfSpeech() {
-            mSpeechRecognizer.stopListening();
+//            mSpeechRecognizer.stopListening();
             Log.d("TAG", "onEndOfSpeech----->");
         }
 
@@ -475,7 +490,7 @@ public class MainActivity extends Activity {
                     sb.append("音频问题");
                     break;
                 case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
-                    sb.append("没有语音输入");
+                    sb.append("囧..我听不见在说什么..大声点吧！");
                     break;
                 case SpeechRecognizer.ERROR_CLIENT:
                     sb.append("其它客户端错误");
@@ -487,21 +502,20 @@ public class MainActivity extends Activity {
                     sb.append("网络问题");
                     break;
                 case SpeechRecognizer.ERROR_NO_MATCH:
-                    sb.append("没有匹配的识别结果");
+                    sb.append("囧..我听不懂你在说什么..");
                     break;
                 case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
                     sb.append("引擎忙");
                     break;
                 case SpeechRecognizer.ERROR_SERVER:
-                    sb.append("服务端错误");
+                    sb.append("服务器错误");
                     break;
                 case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
                     sb.append("连接超时");
                     break;
             }
-            sb.append(":" + error);
             Toast.makeText(MainActivity.this,
-                    "error is :" + sb, Toast.LENGTH_SHORT).show();
+                    "出错了 :" + sb, Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -510,8 +524,13 @@ public class MainActivity extends Activity {
             ArrayList<String> data = bundle.getStringArrayList("results_recognition");
             //mLog.setText(Arrays.toString(data.toArray(new String[data.size()])));
             String result = Arrays.toString(data.toArray(new String[data.size()]));
-            Log.d("TAG", "data is " + result);
-            Toast.makeText(MainActivity.this, result, Toast.LENGTH_LONG).show();
+            handleInput(result);
+//            String[] orgResult = result.split("[^\\[]*");
+//            if (orgResult.length != 0) {
+//                Log.d("TAG", "data is " + orgResult);
+//                handleInput(orgResult[0]);
+//            }
+//            Toast.makeText(MainActivity.this, result, Toast.LENGTH_LONG).show();
 //            toMsg = data.get(0);
         }
 
