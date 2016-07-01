@@ -1,4 +1,4 @@
-package com.example.lyw.maomaorobot.Util;
+package com.example.lyw.maomaorobot.net;
 
 
 import android.util.Log;
@@ -8,6 +8,7 @@ import com.example.lyw.maomaorobot.Bean.CaiPuResponseMessage;
 import com.example.lyw.maomaorobot.Bean.LinkResponseMessage;
 import com.example.lyw.maomaorobot.Bean.NewsResponseMessage;
 import com.example.lyw.maomaorobot.Bean.TextResponseMessage;
+import com.example.lyw.maomaorobot.Util.CommonUtils;
 import com.google.gson.Gson;
 
 import org.json.JSONException;

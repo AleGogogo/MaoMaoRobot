@@ -34,7 +34,7 @@ import com.example.lyw.maomaorobot.DB.DatabaseManager;
 import com.example.lyw.maomaorobot.Profile;
 import com.example.lyw.maomaorobot.R;
 import com.example.lyw.maomaorobot.Util.CommonUtils;
-import com.example.lyw.maomaorobot.Util.HttpEngine;
+import com.example.lyw.maomaorobot.net.HttpEngine;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -66,7 +66,6 @@ public class MainActivity extends Activity {
     private ImageView mImageViewVoice;
     private ImageView mImageViewKeyboard;
     private EditText mEditTextInput;
-
     private Button mButtonSend; //发送按钮
 
     /*状态区*/
