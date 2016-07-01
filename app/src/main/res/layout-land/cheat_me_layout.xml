@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/chatto_bg_normal"
             android:gravity="center"
-            android:id="@+id/id_tvt_cheat_me"
+            android:id="@+id/txv_send_message"
             android:text="hello"
             android:textSize="18sp"
             />
@@ -34,7 +34,7 @@
         android:layout_marginRight="8dp"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:id="@+id/id_img_me"
+        android:id="@+id/igv_send_user_icon"
         android:src="@drawable/me"/>
      <TextView
          android:layout_width="match_parent"

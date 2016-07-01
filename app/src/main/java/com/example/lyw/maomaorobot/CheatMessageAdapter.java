@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.lyw.maomaorobot.Activity.SecondActivity;
@@ -282,16 +283,21 @@ public class CheatMessageAdapter extends BaseAdapter {
     class SendMessageViewHolder {
 
         View parent;
+        ProgressBar mProgressBarSendIng;
         public TextView mShowTime;
         public TextView mTextView;
 
         public SendMessageViewHolder(View parent, SendMessage message) {
             this.parent = parent;
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            mTextView = (TextView) parent.findViewById(R.id.id_tvt_cheat_me);
+            mTextView = (TextView) parent.findViewById(R.id.txv_send_message);
             mTextView.setText(message.getInfo());
             mShowTime = (TextView) parent.findViewById(R.id.id_tvt_timeshow);
             mShowTime.setText(sdf.format(message.getMessageData()));
+            mProgressBarSendIng = (ProgressBar) parent.findViewById(R.id.progressBar_send_ing);
+            // TODO: 2016/7/2 目前最弱智的一种做法，时间复杂度很高
+            mProgressBarSendIng.setVisibility(message.isHadResponse() ? View.GONE : View.VISIBLE);
+
         }
     }
 

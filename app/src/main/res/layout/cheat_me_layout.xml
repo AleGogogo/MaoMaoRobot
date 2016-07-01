@@ -1,49 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <TextView
+        android:id="@+id/id_tvt_timeshow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#bebebe"
-        android:textColor="#f5f5f5"
-        android:id="@+id/id_tvt_timeshow"
         android:layout_gravity="center_horizontal"
-        android:text="2016-5-28"/>
-    <LinearLayout
+        android:background="#bebebe"
+        android:text="2016-5-28"
+        android:textColor="#f5f5f5" />
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="right"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingRight="10dp">
+
+
         <TextView
+            android:id="@+id/txv_send_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/igv_send_user_icon"
             android:background="@drawable/chatto_bg_normal"
             android:gravity="center"
-            android:id="@+id/id_tvt_cheat_me"
             android:text="hello"
             android:textColor="#000000"
-            android:textSize="18sp"
-            />
-        <LinearLayout
+            android:textSize="18sp" />
+
+
+        <ImageView
+            android:id="@+id/igv_send_user_icon"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/me" />
+
+        <TextView
+            android:id="@+id/txv_send_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical">
-    <ImageView
-        android:layout_marginRight="8dp"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:id="@+id/id_img_me"
-        android:src="@drawable/me"/>
-     <TextView
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:gravity="center_horizontal"
-         android:textSize="18sp"
-         android:text="小萌"/>
-        </LinearLayout>
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/igv_send_user_icon"
+            android:layout_marginTop="5dp"
+            android:text="小萌"
+            android:textSize="18sp" />
 
-    </LinearLayout>
+        <ProgressBar
+            android:id="@+id/progressBar_send_ing"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/txv_send_message"
+            android:layout_toStartOf="@+id/txv_send_message" />
+    </RelativeLayout>
 </LinearLayout>

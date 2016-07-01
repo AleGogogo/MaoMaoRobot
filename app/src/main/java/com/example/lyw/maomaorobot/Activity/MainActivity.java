@@ -35,7 +35,6 @@ import com.example.lyw.maomaorobot.Profile;
 import com.example.lyw.maomaorobot.R;
 import com.example.lyw.maomaorobot.Util.CommonUtils;
 import com.example.lyw.maomaorobot.net.HttpEngine;
-import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -392,13 +391,16 @@ public class MainActivity extends Activity {
      *
      * @param sendMessage
      */
-    public void postMessage(SendMessage sendMessage) {
+    public void postMessage(final SendMessage sendMessage) {
 
-        String sendMessageJson = new Gson().toJson(sendMessage);//序列化发送消息对象为josn串
+        String sendMessageJson = sendMessage.getJsonString();//序列化发送消息对象为josn串
+
+        Log.d(TAG, "postMessage: sendMessageJson = [" + sendMessageJson + "]");
 
         HttpEngine.doPost(Profile.API_ROBOT_URL, sendMessageJson, new HttpEngine.HttpCallbackListener() {
             @Override
             public void onSuccess(String response) {
+                sendMessage.setHadResponse(true);
                 mData.add(HttpEngine.serializeResponse(response));
                 Message message = mHandler.obtainMessage();
                 message.what = HANDLER_MESSAGE_RESPONSE_SUCCESS;
@@ -507,7 +509,9 @@ public class MainActivity extends Activity {
             Log.d("TAG", "onResults-----> ");
             ArrayList<String> data = bundle.getStringArrayList("results_recognition");
             //mLog.setText(Arrays.toString(data.toArray(new String[data.size()])));
-            Log.d("TAG", "data is " + Arrays.toString(data.toArray(new String[data.size()])));
+            String result = Arrays.toString(data.toArray(new String[data.size()]));
+            Log.d("TAG", "data is " + result);
+            Toast.makeText(MainActivity.this, result, Toast.LENGTH_LONG).show();
 //            toMsg = data.get(0);
         }
 
