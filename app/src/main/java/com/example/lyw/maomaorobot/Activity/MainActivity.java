@@ -35,6 +35,7 @@ import com.example.lyw.maomaorobot.DB.DatabaseManager;
 import com.example.lyw.maomaorobot.Profile;
 import com.example.lyw.maomaorobot.R;
 import com.example.lyw.maomaorobot.Util.CommonUtils;
+import com.example.lyw.maomaorobot.Util.MessageFilter;
 import com.example.lyw.maomaorobot.net.HttpEngine;
 
 import org.json.JSONArray;
@@ -73,6 +74,8 @@ public class MainActivity extends Activity {
 
     private SpeechRecognizer mSpeechRecognizer;
 
+    private MessageFilter mMessageFilter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +94,7 @@ public class MainActivity extends Activity {
     }
 
     private void initData() {
+        mMessageFilter = MessageFilter.getInstance();
         mData = new ArrayList<>();
         // TODO: 2016/6/8 添加的假数据
         TextResponseMessage textResponseMessage = new TextResponseMessage();
@@ -170,6 +174,7 @@ public class MainActivity extends Activity {
         mAapter.notifyDataSetChanged();
         CommonUtils.moveListToLastPosition(mListView);
         clearInput();
+        mMessageFilter.doFilter(input);
         /*获取服务器返回*/
         postMessage(message);
     }
