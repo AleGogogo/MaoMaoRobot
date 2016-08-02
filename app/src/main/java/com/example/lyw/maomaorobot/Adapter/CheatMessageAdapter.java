@@ -1,4 +1,4 @@
-package com.example.lyw.maomaorobot;
+package com.example.lyw.maomaorobot.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +21,7 @@ import com.example.lyw.maomaorobot.Bean.NewsResponseMessage;
 import com.example.lyw.maomaorobot.Bean.SendMessage;
 import com.example.lyw.maomaorobot.Bean.TextResponseMessage;
 import com.example.lyw.maomaorobot.Bean.TulingMessage;
+import com.example.lyw.maomaorobot.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;

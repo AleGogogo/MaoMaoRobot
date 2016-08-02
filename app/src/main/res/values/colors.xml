@@ -2,4 +2,9 @@
 <resources>
     <color name="button_voice_press">#EBEBEB</color>
     <color name="button_send_color">#7CCD7C</color>
+    <color name="colorEditTip">#E0E0E0</color>
+    <color name="colorModify">#1E90FF</color>
+    <color name="colorTip">#FF8C00</color>
+    <color name="colorBackGroundTip">#EBEBEB</color>
+    <color name="colorWords">#000000</color>
 </resources>

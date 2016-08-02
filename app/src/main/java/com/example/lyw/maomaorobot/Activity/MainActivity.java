@@ -23,15 +23,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.speech.VoiceRecognitionService;
 import com.baidu.yuyin.Constant;
+import com.example.lyw.maomaorobot.Adapter.CheatMessageAdapter;
 import com.example.lyw.maomaorobot.Bean.SendMessage;
 import com.example.lyw.maomaorobot.Bean.TextResponseMessage;
+import com.example.lyw.maomaorobot.Bean.TipsBean;
 import com.example.lyw.maomaorobot.Bean.TulingMessage;
-import com.example.lyw.maomaorobot.CheatMessageAdapter;
 import com.example.lyw.maomaorobot.DB.DatabaseManager;
+import com.example.lyw.maomaorobot.DB.SaveTipMessageFile;
 import com.example.lyw.maomaorobot.Profile;
 import com.example.lyw.maomaorobot.R;
 import com.example.lyw.maomaorobot.Util.CommonUtils;
@@ -61,6 +64,9 @@ public class MainActivity extends Activity {
     private responseHandler mHandler;
 
     private DatabaseManager mManager;
+    private SaveTipMessageFile mTipsFile;
+
+    private TextView mRobotTextView;
 
     /*底部区域*/
     private Button mButtonVoice;
@@ -74,8 +80,13 @@ public class MainActivity extends Activity {
 
     private SpeechRecognizer mSpeechRecognizer;
 
+    /*筛选关键字*/
     private MessageFilter mMessageFilter;
+    public static final String TIXING = "提醒";
+    public static final String BEIWANGLU = "备忘录";
 
+    /*是否匹配标志位*/
+    private boolean isMatch = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +106,7 @@ public class MainActivity extends Activity {
 
     private void initData() {
         mMessageFilter = MessageFilter.getInstance();
+        mTipsFile = SaveTipMessageFile.getInstance();
         mData = new ArrayList<>();
         // TODO: 2016/6/8 添加的假数据
         TextResponseMessage textResponseMessage = new TextResponseMessage();
@@ -109,6 +121,7 @@ public class MainActivity extends Activity {
         mButtonVoice = (Button) findViewById(R.id.btn_voice);
         mEditTextInput = (EditText) findViewById(R.id.edv_input_main);
         mButtonSend = (Button) findViewById(R.id.btn_message_send);
+        mRobotTextView = (TextView)findViewById(R.id.id_tvt_cheat_robot);
 
         mListView = (ListView) findViewById(R.id.id_listview);
         mAapter = new CheatMessageAdapter(this, mData);
@@ -162,6 +175,15 @@ public class MainActivity extends Activity {
                 handleInput(input);
             }
         });
+
+//        mRobotTextView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this,TipsActivity.class);
+//                startActivity(intent);
+//                Log.d(TAG, "run: 成功进如"+BEIWANGLU);
+//            }
+//        });
     }
 
 
@@ -170,15 +192,60 @@ public class MainActivity extends Activity {
      */
     private void handleInput(String input) {
         SendMessage message = new SendMessage(input);
+        Log.d(TAG, "isMatch  is" +isMatch);
+
         mData.add(message);
         mAapter.notifyDataSetChanged();
         CommonUtils.moveListToLastPosition(mListView);
         clearInput();
-        mMessageFilter.doFilter(input);
-        /*获取服务器返回*/
-        postMessage(message);
+        addFilterItem(input);
+        messageDoFilter(input);
+        if (!isMatch) {
+            postMessage(message);
+        }else {
+            if (input.contains(TIXING)) {
+                TextResponseMessage textResponseMessage = new TextResponseMessage();
+                textResponseMessage.setCode(100000);
+                textResponseMessage.setText("已帮您记下来了");
+                mData.add(textResponseMessage);
+            } else {
+                TextResponseMessage textResponseMessage = new TextResponseMessage();
+                textResponseMessage.setCode(100000);
+                textResponseMessage.setText("点击打开备忘录");
+                mData.add(textResponseMessage);
+            }
+        }
+        mAapter.notifyDataSetChanged();
+        CommonUtils.moveListToLastPosition(mListView);
     }
 
+
+
+    private void addFilterItem(final String input) {
+        mMessageFilter.addFilter(new MessageFilter.FilterItem(TIXING, input, new Runnable() {
+            @Override
+            public void run() {
+//                mTipsFile.saveTips(MainActivity.this,input);
+                TipsBean tipsBean = new TipsBean();
+                tipsBean.setmImageId(R.id.id_img_createtip);
+                tipsBean.setmTipsInfo(input);
+                mTipsFile.saveTips(MainActivity.this,tipsBean);
+                Log.d(TAG, "run: 成功进如"+TIXING);
+            }
+        }));
+        mMessageFilter.addFilter(new MessageFilter.FilterItem(BEIWANGLU, input, new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }));
+    }
+
+
+    private void messageDoFilter(String message) {
+
+        isMatch = mMessageFilter.doFilter(message);
+    }
     private void initSwitchImageViewListener() {
         /*设定语音按钮状态*/
         mImageViewKeyboard.setOnClickListener(new View.OnClickListener() {
@@ -374,9 +441,17 @@ public class MainActivity extends Activity {
             case R.id.id_actionbar_search:
 
                 break;
+            case R.id.id_actionbar_remember: //打开备忘录
+                OnMenuOpenRemember();
+
         }
         return super.onOptionsItemSelected(item);
 
+    }
+
+    private void OnMenuOpenRemember() {
+        Intent intent = new Intent(MainActivity.this, TipsActivity.class);
+        startActivity(intent);
     }
 
     private void OnMenuVoiceSettingClick() {
@@ -530,13 +605,7 @@ public class MainActivity extends Activity {
             //mLog.setText(Arrays.toString(data.toArray(new String[data.size()])));
             String result = Arrays.toString(data.toArray(new String[data.size()]));
             handleInput(result);
-//            String[] orgResult = result.split("[^\\[]*");
-//            if (orgResult.length != 0) {
-//                Log.d("TAG", "data is " + orgResult);
-//                handleInput(orgResult[0]);
-//            }
-//            Toast.makeText(MainActivity.this, result, Toast.LENGTH_LONG).show();
-//            toMsg = data.get(0);
+
         }
 
         @Override

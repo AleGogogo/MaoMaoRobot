@@ -1,7 +1,5 @@
 package com.example.lyw.maomaorobot.Util;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -31,48 +29,42 @@ public class MessageFilter {
     private MessageFilter() {
         //no instance
         mFilterItems = new ArrayList<>();
-        mFilterItems.add(new FilterItem(TIXING, null, new Runnable() {
-            @Override
-            public void run() {
-                // TODO: 2016/7/30
-                Log.d(TAG, "run: 成功匹配到：" + TIXING);
-            }
-        }));
-        mFilterItems.add(new FilterItem(BEIWANGLU, null, new Runnable() {
-            @Override
-            public void run() {
-                // TODO: 2016/7/30
-                Log.d(TAG, "run: 成功匹配到：" + BEIWANGLU);
-            }
-        }));
-
 
     }
 
 
-    public void doFilter(String messageBody) {
+    public void addFilter(FilterItem item) {
+        mFilterItems.add(item);
+
+    }
+
+    public boolean doFilter(String messageBody) {
+        boolean isMatch = false;
         for (FilterItem item : mFilterItems) {
             if (item.match(messageBody)) {
                 Runnable runnable = item.getRunnable();
+                //为啥在这里进行一个判断?
                 if (null == runnable)
                     continue;
                 EXECUTOR_SERVICE.execute(runnable);
+                isMatch = true;
             }
         }
+        return isMatch;
     }
 
 
-    class FilterItem {
+    public static class FilterItem {
 
-        private String filterRegx;
+        private String message;
 
         private Runnable runnable;
 
         private String targetMessage;
 
 
-        public FilterItem(String targetMessage, String filterRegx, Runnable runnable) {
-            this.filterRegx = filterRegx;
+        public FilterItem(String targetMessage, String message, Runnable runnable) {
+            this.message = message;
             this.runnable = runnable;
             this.targetMessage = targetMessage;
         }

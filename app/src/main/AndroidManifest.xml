@@ -74,7 +74,7 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
         </activity>
-
+        <activity android:name=".Activity.TipsActivity"/>
     </application>
 
     <uses-permission android:name="android.permission.READ_CONTACTS"/>

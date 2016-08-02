@@ -13,5 +13,10 @@
         android:icon="@drawable/action_voice_settings"
         android:showAsAction="withText|collapseActionView"
         android:title="@string/action_voice_setting"/>
+    <item
+        android:id="@+id/id_actionbar_remember"
+        android:icon="@drawable/notes"
+        android:showAsAction="withText|collapseActionView"
+        android:title="@string/actionbar_remember"/>
 
 </menu>

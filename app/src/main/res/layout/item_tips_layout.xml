@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="50dp">
+
+    <ImageButton
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="3dp"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/id_img_createtip"
+        android:src="@drawable/icon_plus"/>
+    <EditText
+        android:background="@color/colorEditTip"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@id/id_img_createtip"
+        android:cursorVisible="false"
+        android:id="@+id/id_edit_createtip"
+        android:textSize="20dp"
+        android:textColor="@color/colorWords"/>
+    <Button
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/id_edit_createtip"
+        android:id="@+id/id_but_handtips"
+        android:visibility="gone"/>
+
+</RelativeLayout>

@@ -3,7 +3,7 @@
     <string name="app_name">MaoMaoRobot</string>
     <string name="actionbar_search">搜索</string>
     <string name="action_voice_setting">语音参数设置</string>
-
+    <string name="actionbar_remember">备忘录</string>
     <string name="search_hint">输入要查找的内容</string>
 
 
