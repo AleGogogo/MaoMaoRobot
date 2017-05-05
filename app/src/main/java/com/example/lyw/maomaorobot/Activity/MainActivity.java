@@ -1,4 +1,4 @@
-package com.example.lyw.maomaorobot.Activity;
+package com.example.lyw.maomaorobot.activity;
 
 
 import android.app.Activity;
@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
 import android.text.Editable;
@@ -33,7 +34,7 @@ import com.example.lyw.maomaorobot.Bean.SendMessage;
 import com.example.lyw.maomaorobot.Bean.TextResponseMessage;
 import com.example.lyw.maomaorobot.Bean.TipsBean;
 import com.example.lyw.maomaorobot.Bean.TulingMessage;
-import com.example.lyw.maomaorobot.DB.DatabaseManager;
+
 import com.example.lyw.maomaorobot.DB.SaveTipMessageFile;
 import com.example.lyw.maomaorobot.Profile;
 import com.example.lyw.maomaorobot.R;
@@ -48,6 +49,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.example.lyw.maomaorobot.Util.MessageFilter.TAKE_PHOTO;
+
 /**
  *
  */
@@ -57,13 +60,14 @@ public class MainActivity extends Activity {
     /*handler消息类型 ,用于鉴别服务器返回消息状态*/
     public static final int HANDLER_MESSAGE_RESPONSE_SUCCESS = 1001;
     public static final int HANDLER_MESSAGE_RESPONSE_FAILED = 1002;
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 
     private ArrayList<TulingMessage> mData;
     private ListView mListView;
     private CheatMessageAdapter mAapter;
     private responseHandler mHandler;
 
-    private DatabaseManager mManager;
+   // private DatabaseManager mManager;
     private SaveTipMessageFile mTipsFile;
 
     private TextView mRobotTextView;
@@ -93,10 +97,12 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mHandler = new responseHandler();
-        mManager = DatabaseManager.getIntance(MainActivity.this);
-        mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this, new ComponentName(
+       // mManager = DatabaseManager.getIntance(MainActivity.this);
+        mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this, new
+                ComponentName(
                 this, VoiceRecognitionService.class));
-        mSpeechRecognizer.setRecognitionListener(new CustomRecognitionListener());
+        mSpeechRecognizer.setRecognitionListener(new
+                CustomRecognitionListener());
         initData();
         initView();
         iniListener();
@@ -121,7 +127,7 @@ public class MainActivity extends Activity {
         mButtonVoice = (Button) findViewById(R.id.btn_voice);
         mEditTextInput = (EditText) findViewById(R.id.edv_input_main);
         mButtonSend = (Button) findViewById(R.id.btn_message_send);
-        mRobotTextView = (TextView)findViewById(R.id.id_tvt_cheat_robot);
+        mRobotTextView = (TextView) findViewById(R.id.id_tvt_cheat_robot);
 
         mListView = (ListView) findViewById(R.id.id_listview);
         mAapter = new CheatMessageAdapter(this, mData);
@@ -179,7 +185,8 @@ public class MainActivity extends Activity {
 //        mRobotTextView.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this,TipsActivity.class);
+//                Intent intent = new Intent(MainActivity.this,TipsActivity
+// .class);
 //                startActivity(intent);
 //                Log.d(TAG, "run: 成功进如"+BEIWANGLU);
 //            }
@@ -192,51 +199,98 @@ public class MainActivity extends Activity {
      */
     private void handleInput(String input) {
         SendMessage message = new SendMessage(input);
-        Log.d(TAG, "isMatch  is" +isMatch);
-
         mData.add(message);
         mAapter.notifyDataSetChanged();
         CommonUtils.moveListToLastPosition(mListView);
         clearInput();
         addFilterItem(input);
         messageDoFilter(input);
+        Log.d(TAG, "isMatch  is" + isMatch);
         if (!isMatch) {
             postMessage(message);
-        }else {
-            if (input.contains(TIXING)) {
-                TextResponseMessage textResponseMessage = new TextResponseMessage();
-                textResponseMessage.setCode(100000);
-                textResponseMessage.setText("已帮您记下来了");
-                mData.add(textResponseMessage);
-            } else {
-                TextResponseMessage textResponseMessage = new TextResponseMessage();
-                textResponseMessage.setCode(100000);
-                textResponseMessage.setText("点击打开备忘录");
-                mData.add(textResponseMessage);
+        } else {
+            switch (input) {
+                case TIXING :
+                    TextResponseMessage textResponseMessage = new
+                            TextResponseMessage();
+                    textResponseMessage.setCode(100000);
+                    textResponseMessage.setText("已帮您记下来了");
+                    mData.add(textResponseMessage);
+                    mAapter.notifyDataSetChanged();
+                    CommonUtils.moveListToLastPosition(mListView);
+                    break;
+                case BEIWANGLU:
+                    TextResponseMessage rememberResponseMessage = new
+                            TextResponseMessage();
+                    rememberResponseMessage.setCode(100000);
+                    rememberResponseMessage.setText("点击打开备忘录");
+                    mData.add(rememberResponseMessage);
+                    mAapter.notifyDataSetChanged();
+                    CommonUtils.moveListToLastPosition(mListView);
+                    Intent intent = new Intent(MainActivity.this,
+                            TipsActivity.class);
+                    startActivity(intent);
+                    break;
+                case TAKE_PHOTO:
+                    Intent intent2 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intent2,CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+
+            }
+
             }
         }
-        mAapter.notifyDataSetChanged();
-        CommonUtils.moveListToLastPosition(mListView);
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent
+            data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE){
+            if (resultCode == RESULT_OK){
+                if (data != null){
+                    Log.d(TAG, "data is NOT null, file on default position.");
+                }
+        }
+        }
     }
 
-
-
     private void addFilterItem(final String input) {
-        mMessageFilter.addFilter(new MessageFilter.FilterItem(TIXING, input, new Runnable() {
+        mMessageFilter.addFilter(new MessageFilter.FilterItem(TIXING, input,
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        isMatch = mMessageFilter.doFilter(input);
+                        if (!isMatch) return;
+                        TipsBean tipsBean = new TipsBean();
+                        tipsBean.setmImageId(R.drawable.icon_plus);
+                        tipsBean.setmTipsInfo(input);
+                        mTipsFile.saveTips(MainActivity.this, tipsBean);
+                        Log.d(TAG, "run: 成功进入" + TIXING);
+                    }
+                }));
+        mMessageFilter.addFilter(new MessageFilter.FilterItem(BEIWANGLU, input,
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        isMatch = mMessageFilter.doFilter(input);
+                        if (!isMatch) return;
+                        TipsBean tipsBean = new TipsBean();
+                        tipsBean.setmImageId(R.drawable.icon_plus);
+                        tipsBean.setmTipsInfo(input);
+                        mTipsFile.saveTips(MainActivity.this, tipsBean);
+                        Log.d(TAG, "run: 成功进入" + BEIWANGLU);
+                    }
+                }));
+        mMessageFilter.addFilter(new MessageFilter.FilterItem(TAKE_PHOTO,
+                input, new Runnable() {
             @Override
             public void run() {
-//                mTipsFile.saveTips(MainActivity.this,input);
+                isMatch = mMessageFilter.doFilter(input);
+                if (!isMatch) return;
                 TipsBean tipsBean = new TipsBean();
-                tipsBean.setmImageId(R.id.id_img_createtip);
                 tipsBean.setmTipsInfo(input);
+                tipsBean.setmImageId(R.id.id_img_createtip);
                 mTipsFile.saveTips(MainActivity.this,tipsBean);
-                Log.d(TAG, "run: 成功进如"+TIXING);
-            }
-        }));
-        mMessageFilter.addFilter(new MessageFilter.FilterItem(BEIWANGLU, input, new Runnable() {
-            @Override
-            public void run() {
-
+                Log.d(TAG, "run: 成功添加 "+ TAKE_PHOTO);
             }
         }));
     }
@@ -246,6 +300,7 @@ public class MainActivity extends Activity {
 
         isMatch = mMessageFilter.doFilter(message);
     }
+
     private void initSwitchImageViewListener() {
         /*设定语音按钮状态*/
         mImageViewKeyboard.setOnClickListener(new View.OnClickListener() {
@@ -288,12 +343,14 @@ public class MainActivity extends Activity {
         mEditTextInput.addTextChangedListener(new TextWatcher() {
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            public void beforeTextChanged(CharSequence s, int start, int
+                    count, int after) {
 
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
                 if (isEmpty()) {
                     mButtonSend.setVisibility(View.GONE);
                 } else {
@@ -329,41 +386,53 @@ public class MainActivity extends Activity {
      * @param intent
      */
     private void bindParams(Intent intent) {
-        SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+        SharedPreferences defaultSharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this.getApplicationContext());
 
         if (defaultSharedPreferences.getBoolean("tips_sound", true)) {
-            intent.putExtra(Constant.SOUND_START, R.raw.bdspeech_recognition_start);
+            intent.putExtra(Constant.SOUND_START, R.raw
+                    .bdspeech_recognition_start);
             intent.putExtra(Constant.SOUND_END, R.raw.bdspeech_speech_end);
-            intent.putExtra(Constant.SOUND_SUCCESS, R.raw.bdspeech_recognition_success);
-            intent.putExtra(Constant.SOUND_ERROR, R.raw.bdspeech_recognition_error);
-            intent.putExtra(Constant.SOUND_CANCEL, R.raw.bdspeech_recognition_cancel);
+            intent.putExtra(Constant.SOUND_SUCCESS, R.raw
+                    .bdspeech_recognition_success);
+            intent.putExtra(Constant.SOUND_ERROR, R.raw
+                    .bdspeech_recognition_error);
+            intent.putExtra(Constant.SOUND_CANCEL, R.raw
+                    .bdspeech_recognition_cancel);
         }
 
         //获取Setting页面设置参数
         {
             /*输入语音文件，可以代替说话了*/
             if (defaultSharedPreferences.contains(Constant.EXTRA_INFILE)) {
-                String inputFilePath = defaultSharedPreferences.getString(Constant.EXTRA_INFILE, "").replaceAll(",.*", "").trim();
-                Log.d(TAG, "bindParams: inputFilePath = [" + inputFilePath + "]");
+                String inputFilePath = defaultSharedPreferences.getString
+                        (Constant.EXTRA_INFILE, "").replaceAll(",.*", "")
+                        .trim();
+                Log.d(TAG, "bindParams: inputFilePath = [" + inputFilePath +
+                        "]");
                 intent.putExtra(Constant.EXTRA_INFILE, inputFilePath);
             }
 
             /*保存录音*/
-            if (defaultSharedPreferences.getBoolean(Constant.EXTRA_OUTFILE, false)) {
+            if (defaultSharedPreferences.getBoolean(Constant.EXTRA_OUTFILE,
+                    false)) {
                 intent.putExtra(Constant.EXTRA_OUTFILE, "sdcard/outfile.pcm");
             }
 
             /*采样率*/
             if (defaultSharedPreferences.contains(Constant.EXTRA_SAMPLE)) {
-                String tmp = defaultSharedPreferences.getString(Constant.EXTRA_SAMPLE, "").replaceAll(",.*", "").trim();
+                String tmp = defaultSharedPreferences.getString(Constant
+                        .EXTRA_SAMPLE, "").replaceAll(",.*", "").trim();
                 if (null != tmp && !"".equals(tmp)) {
-                    intent.putExtra(Constant.EXTRA_SAMPLE, Integer.parseInt(tmp));
+                    intent.putExtra(Constant.EXTRA_SAMPLE, Integer.parseInt
+                            (tmp));
                 }
             }
 
             /*语种*/
             if (defaultSharedPreferences.contains(Constant.EXTRA_LANGUAGE)) {
-                String tmp = defaultSharedPreferences.getString(Constant.EXTRA_LANGUAGE, "").replaceAll(",.*", "").trim();
+                String tmp = defaultSharedPreferences.getString(Constant
+                        .EXTRA_LANGUAGE, "").replaceAll(",.*", "").trim();
                 if (null != tmp && !"".equals(tmp)) {
                     intent.putExtra(Constant.EXTRA_LANGUAGE, tmp);
                 }
@@ -371,7 +440,8 @@ public class MainActivity extends Activity {
 
             /*语义解析*/
             if (defaultSharedPreferences.contains(Constant.EXTRA_NLU)) {
-                String tmp = defaultSharedPreferences.getString(Constant.EXTRA_NLU, "").replaceAll(",.*", "").trim();
+                String tmp = defaultSharedPreferences.getString(Constant
+                        .EXTRA_NLU, "").replaceAll(",.*", "").trim();
                 if (null != tmp && !"".equals(tmp)) {
                     intent.putExtra(Constant.EXTRA_NLU, tmp);
                 }
@@ -379,7 +449,8 @@ public class MainActivity extends Activity {
 
             /*VAD*/
             if (defaultSharedPreferences.contains(Constant.EXTRA_VAD)) {
-                String tmp = defaultSharedPreferences.getString(Constant.EXTRA_VAD, "").replaceAll(",.*", "").trim();
+                String tmp = defaultSharedPreferences.getString(Constant
+                        .EXTRA_VAD, "").replaceAll(",.*", "").trim();
                 if (null != tmp && !"".equals(tmp)) {
                     intent.putExtra(Constant.EXTRA_VAD, tmp);
                 }
@@ -388,7 +459,8 @@ public class MainActivity extends Activity {
             /*垂直领域*/
             String prop = null;
             if (defaultSharedPreferences.contains(Constant.EXTRA_PROP)) {
-                String tmp = defaultSharedPreferences.getString(Constant.EXTRA_PROP, "").replaceAll(",.*", "").trim();
+                String tmp = defaultSharedPreferences.getString(Constant
+                        .EXTRA_PROP, "").replaceAll(",.*", "").trim();
                 if (null != tmp && !"".equals(tmp)) {
                     intent.putExtra(Constant.EXTRA_PROP, Integer.parseInt(tmp));
                     prop = tmp;
@@ -397,16 +469,22 @@ public class MainActivity extends Activity {
 
             // offline asr
             {
-                intent.putExtra(Constant.EXTRA_OFFLINE_ASR_BASE_FILE_PATH, "/sdcard/easr/s_1");
+                intent.putExtra(Constant.EXTRA_OFFLINE_ASR_BASE_FILE_PATH,
+                        "/sdcard/easr/s_1");
                 if (null != prop) {
                     int propInt = Integer.parseInt(prop);
                     if (propInt == 10060) {
-                        intent.putExtra(Constant.EXTRA_OFFLINE_LM_RES_FILE_PATH, "/sdcard/easr/s_2_Navi");
+                        intent.putExtra(Constant
+                                        .EXTRA_OFFLINE_LM_RES_FILE_PATH,
+                                "/sdcard/easr/s_2_Navi");
                     } else if (propInt == 20000) {
-                        intent.putExtra(Constant.EXTRA_OFFLINE_LM_RES_FILE_PATH, "/sdcard/easr/s_2_InputMethod");
+                        intent.putExtra(Constant
+                                        .EXTRA_OFFLINE_LM_RES_FILE_PATH,
+                                "/sdcard/easr/s_2_InputMethod");
                     }
                 }
-                intent.putExtra(Constant.EXTRA_OFFLINE_SLOT_DATA, buildTestSlotData()); // TODO: 2016/6/30 未查到此参数含义！
+                intent.putExtra(Constant.EXTRA_OFFLINE_SLOT_DATA,
+                        buildTestSlotData()); // TODO: 2016/6/30 未查到此参数含义！
             }
         }
 
@@ -488,29 +566,30 @@ public class MainActivity extends Activity {
      */
     public void postMessage(final SendMessage sendMessage) {
 
-        String sendMessageJson = sendMessage.getJsonString();//序列化发送消息对象为josn串
+        String sendMessageJson = sendMessage.getJsonString();//序列化发送消息对象为json串
 
         Log.d(TAG, "postMessage: sendMessageJson = [" + sendMessageJson + "]");
 
-        HttpEngine.doPost(Profile.API_ROBOT_URL, sendMessageJson, new HttpEngine.HttpCallbackListener() {
-            @Override
-            public void onSuccess(String response) {
-                sendMessage.setHadResponse(true);
-                mData.add(HttpEngine.serializeResponse(response));
-                Message message = mHandler.obtainMessage();
-                message.what = HANDLER_MESSAGE_RESPONSE_SUCCESS;
-                mHandler.sendMessage(message);
-            }
+        HttpEngine.doPost(Profile.API_ROBOT_URL, sendMessageJson, new
+                HttpEngine.HttpCallbackListener() {
+                    @Override
+                    public void onSuccess(String response) {
+                        sendMessage.setHadResponse(true);
+                        mData.add(HttpEngine.serializeResponse(response));
+                        Message message = mHandler.obtainMessage();
+                        message.what = HANDLER_MESSAGE_RESPONSE_SUCCESS;
+                        mHandler.sendMessage(message);
+                    }
 
-            @Override
-            public void onFailed(String errorMessage) {
-                Message message = mHandler.obtainMessage();
-                message.what = HANDLER_MESSAGE_RESPONSE_FAILED;
-                message.obj = errorMessage;
-                mHandler.sendMessage(message);
-            }
+                    @Override
+                    public void onFailed(String errorMessage) {
+                        Message message = mHandler.obtainMessage();
+                        message.what = HANDLER_MESSAGE_RESPONSE_FAILED;
+                        message.obj = errorMessage;
+                        mHandler.sendMessage(message);
+                    }
 
-        });
+                });
     }
 
     /**
@@ -526,7 +605,8 @@ public class MainActivity extends Activity {
                     break;
                 case HANDLER_MESSAGE_RESPONSE_FAILED:
                     String errorMessage = (String) msg.obj;
-                    Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, errorMessage, Toast
+                            .LENGTH_LONG).show();
                     break;
             }
         }
@@ -601,9 +681,12 @@ public class MainActivity extends Activity {
         @Override
         public void onResults(Bundle bundle) {
             Log.d("TAG", "onResults-----> ");
-            ArrayList<String> data = bundle.getStringArrayList("results_recognition");
-            //mLog.setText(Arrays.toString(data.toArray(new String[data.size()])));
-            String result = Arrays.toString(data.toArray(new String[data.size()]));
+            ArrayList<String> data = bundle.getStringArrayList
+                    ("results_recognition");
+            //mLog.setText(Arrays.toString(data.toArray(new String[data.size
+            // ()])));
+            String result = Arrays.toString(data.toArray(new String[data.size
+                    ()]));
             handleInput(result);
 
         }

@@ -32,7 +32,7 @@ public class CommonUtils {
      *
      * @param closeable
      */
-    public static void colseQuilty(Closeable closeable) {
+    public static void closeQuilty(Closeable closeable) {
         if (null != closeable) {
             try {
                 closeable.close();

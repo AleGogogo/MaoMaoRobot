@@ -62,8 +62,9 @@
 
 
         <activity
-            android:name=".Activity.MainActivity"
-            android:launchMode="singleTop">
+            android:name="com.example.lyw.maomaorobot.activity.MainActivity"
+            android:launchMode="singleTop"
+           >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <action android:name="android.intent.action.SEARCH"/>
@@ -74,7 +75,8 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
         </activity>
-        <activity android:name=".Activity.TipsActivity"/>
+        <activity android:name="com.example.lyw.maomaorobot.activity.TipsActivity"/>
+        <activity android:name=".activity.SecondActivity"/>
     </application>
 
     <uses-permission android:name="android.permission.READ_CONTACTS"/>

@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.lyw.maomaorobot.Activity.SecondActivity;
+import com.example.lyw.maomaorobot.activity.SecondActivity;
 import com.example.lyw.maomaorobot.Bean.BaseResponseMessage;
 import com.example.lyw.maomaorobot.Bean.CaiPuResponseMessage;
 import com.example.lyw.maomaorobot.Bean.LinkResponseMessage;

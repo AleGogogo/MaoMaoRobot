@@ -1,8 +1,7 @@
-package com.example.lyw.maomaorobot.Activity;
+package com.example.lyw.maomaorobot.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;

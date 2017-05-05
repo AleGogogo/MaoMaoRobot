@@ -85,8 +85,8 @@ public class HttpEngine {
                 } catch (Exception e) {
                     notifyListener(HttpCallbackListener.MESSAGE_FAILED, "其他错误，请稍候再试！");
                 } finally {
-                    CommonUtils.colseQuilty(BR);
-                    CommonUtils.colseQuilty(BOS);
+                    CommonUtils.closeQuilty(BR);
+                    CommonUtils.closeQuilty(BOS);
                 }
             }
         }).start();

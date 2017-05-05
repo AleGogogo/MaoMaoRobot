@@ -1,9 +1,7 @@
 package com.example;
 
 
-import de.greenrobot.daogenerator.DaoGenerator;
-import de.greenrobot.daogenerator.Entity;
-import de.greenrobot.daogenerator.Schema;
+
 
 public class ExampleDaoGenerator {
     public static final String DAO_PATH = "C:/Users/LYW/AndroidStudioProjects/M" +

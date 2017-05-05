@@ -1,5 +1,7 @@
 package com.example.lyw.maomaorobot.Util;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -18,6 +20,8 @@ public class MessageFilter {
     public static final String TIXING = "提醒";
 
     public static final String BEIWANGLU = "备忘录";
+
+    public static final String TAKE_PHOTO = "拍照";
 
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
 
@@ -48,6 +52,7 @@ public class MessageFilter {
                     continue;
                 EXECUTOR_SERVICE.execute(runnable);
                 isMatch = true;
+                Log.d(TAG, "doFilter: ");
             }
         }
         return isMatch;
