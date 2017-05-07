@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
@@ -29,12 +30,10 @@ import android.widget.Toast;
 
 import com.baidu.speech.VoiceRecognitionService;
 import com.baidu.yuyin.Constant;
-import com.example.lyw.maomaorobot.Adapter.CheatMessageAdapter;
+import com.example.lyw.maomaorobot.adapter.CheatMessageAdapter;
 import com.example.lyw.maomaorobot.Bean.SendMessage;
 import com.example.lyw.maomaorobot.Bean.TextResponseMessage;
-import com.example.lyw.maomaorobot.Bean.TipsBean;
 import com.example.lyw.maomaorobot.Bean.TulingMessage;
-
 import com.example.lyw.maomaorobot.DB.SaveTipMessageFile;
 import com.example.lyw.maomaorobot.Profile;
 import com.example.lyw.maomaorobot.R;
@@ -48,7 +47,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import static com.example.lyw.maomaorobot.Util.MessageFilter.SEARCH_KEY_WORDS;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.TAKE_PHOTO;
 
 /**
@@ -67,7 +69,7 @@ public class MainActivity extends Activity {
     private CheatMessageAdapter mAapter;
     private responseHandler mHandler;
 
-   // private DatabaseManager mManager;
+    // private DatabaseManager mManager;
     private SaveTipMessageFile mTipsFile;
 
     private TextView mRobotTextView;
@@ -97,7 +99,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mHandler = new responseHandler();
-       // mManager = DatabaseManager.getIntance(MainActivity.this);
+        // mManager = DatabaseManager.getIntance(MainActivity.this);
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this, new
                 ComponentName(
                 this, VoiceRecognitionService.class));
@@ -119,6 +121,7 @@ public class MainActivity extends Activity {
         textResponseMessage.setCode(100000);
         textResponseMessage.setText("你好，毛毛为你服务！");
         mData.add(textResponseMessage);
+        addFilterItem();
     }
 
     private void initView() {
@@ -203,14 +206,12 @@ public class MainActivity extends Activity {
         mAapter.notifyDataSetChanged();
         CommonUtils.moveListToLastPosition(mListView);
         clearInput();
-        addFilterItem(input);
         messageDoFilter(input);
-        Log.d(TAG, "isMatch  is" + isMatch);
         if (!isMatch) {
             postMessage(message);
         } else {
             switch (input) {
-                case TIXING :
+                case TIXING:
                     TextResponseMessage textResponseMessage = new
                             TextResponseMessage();
                     textResponseMessage.setCode(100000);
@@ -227,72 +228,101 @@ public class MainActivity extends Activity {
                     mData.add(rememberResponseMessage);
                     mAapter.notifyDataSetChanged();
                     CommonUtils.moveListToLastPosition(mListView);
-                    Intent intent = new Intent(MainActivity.this,
-                            TipsActivity.class);
-                    startActivity(intent);
+//                    Intent intent = new Intent(MainActivity.this,
+//                            TipsActivity.class);
+//                    startActivity(intent);
                     break;
-                case TAKE_PHOTO:
-                    Intent intent2 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent2,CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
 
             }
+            message.setHadResponse(true);
 
-            }
         }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent
             data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE){
-            if (resultCode == RESULT_OK){
-                if (data != null){
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
                     Log.d(TAG, "data is NOT null, file on default position.");
                 }
-        }
+            }
         }
     }
 
-    private void addFilterItem(final String input) {
-        mMessageFilter.addFilter(new MessageFilter.FilterItem(TIXING, input,
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        isMatch = mMessageFilter.doFilter(input);
-                        if (!isMatch) return;
-                        TipsBean tipsBean = new TipsBean();
-                        tipsBean.setmImageId(R.drawable.icon_plus);
-                        tipsBean.setmTipsInfo(input);
-                        mTipsFile.saveTips(MainActivity.this, tipsBean);
-                        Log.d(TAG, "run: 成功进入" + TIXING);
-                    }
-                }));
-        mMessageFilter.addFilter(new MessageFilter.FilterItem(BEIWANGLU, input,
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        isMatch = mMessageFilter.doFilter(input);
-                        if (!isMatch) return;
-                        TipsBean tipsBean = new TipsBean();
-                        tipsBean.setmImageId(R.drawable.icon_plus);
-                        tipsBean.setmTipsInfo(input);
-                        mTipsFile.saveTips(MainActivity.this, tipsBean);
-                        Log.d(TAG, "run: 成功进入" + BEIWANGLU);
-                    }
-                }));
-        mMessageFilter.addFilter(new MessageFilter.FilterItem(TAKE_PHOTO,
-                input, new Runnable() {
+    private void addFilterItem() {
+//        mMessageFilter.addFilter(new MessageFilter.FilterItem(TIXING, input,
+//                new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        TipsBean tipsBean = new TipsBean();
+//                        tipsBean.setmImageId(R.drawable.icon_plus);
+//                        tipsBean.setmTipsInfo(input);
+//                        mTipsFile.saveTips(MainActivity.this, tipsBean);
+//                        Log.d(TAG, "run: 成功进入" + TIXING);
+//                    }
+//                }));
+//        mMessageFilter.addFilter(new MessageFilter.FilterItem(BEIWANGLU, input,
+//                new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        TipsBean tipsBean = new TipsBean();
+//                        tipsBean.setmImageId(R.drawable.icon_plus);
+//                        tipsBean.setmTipsInfo(input);
+//                        mTipsFile.saveTips(MainActivity.this, tipsBean);
+//                        Log.d(TAG, "run: 成功进入" + BEIWANGLU);
+//                    }
+//                }));
+        mMessageFilter.addFilter(new MessageFilter.FilterItem(TAKE_PHOTO, new Runnable() {
             @Override
             public void run() {
-                isMatch = mMessageFilter.doFilter(input);
-                if (!isMatch) return;
-                TipsBean tipsBean = new TipsBean();
-                tipsBean.setmTipsInfo(input);
-                tipsBean.setmImageId(R.id.id_img_createtip);
-                mTipsFile.saveTips(MainActivity.this,tipsBean);
-                Log.d(TAG, "run: 成功添加 "+ TAKE_PHOTO);
+                try {
+                    openCamera();
+                } catch (Exception e) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "error，请检查相机应用是否存在！", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         }));
+        mMessageFilter.addFilter(new MessageFilter.FilterItem(SEARCH_KEY_WORDS, new Runnable() {
+            @Override
+            public void run() {
+                String currentMessage = mMessageFilter.getCurrentMessage();
+                if (!TextUtils.isEmpty(currentMessage)) {
+                    for (String key : SEARCH_KEY_WORDS) {
+                        String[] split = currentMessage.split(key);
+                        if (split.length > 1) {
+                            searchOnWebView(split[1].split("]")[0]);
+                            break;
+                        }
+                    }
+                }
+            }
+        }));
+    }
+
+    private void searchOnWebView(String keyWord) {
+        Intent intent = new Intent(this, WebViewActivity.class);
+        intent.putExtra(WebViewActivity.EXTRA_KEY_WORD, keyWord);
+        startActivity(intent);
+    }
+
+    private void openCamera() {
+        Intent intent = new Intent();
+        // 指定开启系统相机的Action
+        intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        if (CommonUtils.canOpenUserApp(this, intent)) {
+            startActivity(intent);
+        } else {
+            throw new RuntimeException("不能打开相机");
+        }
     }
 
 
@@ -528,8 +558,8 @@ public class MainActivity extends Activity {
     }
 
     private void OnMenuOpenRemember() {
-        Intent intent = new Intent(MainActivity.this, TipsActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(MainActivity.this, com.example.lyw.maomaorobot.activity.TipsActivity.class);
+//        startActivity(intent);
     }
 
     private void OnMenuVoiceSettingClick() {

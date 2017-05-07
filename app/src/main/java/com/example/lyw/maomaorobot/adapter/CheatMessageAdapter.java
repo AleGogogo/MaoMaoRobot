@@ -1,4 +1,4 @@
-package com.example.lyw.maomaorobot.Adapter;
+package com.example.lyw.maomaorobot.adapter;
 
 import android.content.Context;
 import android.content.Intent;

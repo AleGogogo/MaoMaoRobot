@@ -1,8 +1,12 @@
 package com.example.lyw.maomaorobot.Util;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.widget.ListView;
 
 import java.io.Closeable;
+import java.io.Console;
 import java.io.IOException;
 
 /**
@@ -24,6 +28,12 @@ public class CommonUtils {
         if (null == listView.getAdapter())
             return;
         listView.smoothScrollToPosition(listView.getAdapter().getCount());
+    }
+
+    public static boolean canOpenUserApp(Context context, Intent intent) {
+        PackageManager packageManager = context.getPackageManager();
+        return intent.resolveActivity(packageManager) != null;
+
     }
 
 

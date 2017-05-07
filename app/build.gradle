@@ -13,6 +13,9 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
+        ndk {
+            abiFilters "armeabi", "armeabi-v8a"
+        }
     }
     buildTypes {
         release {
@@ -21,14 +24,13 @@ android {
         }
 
     }
-//    sourceSets {
-//        main {
-//            jniLibs.srcDirs = ['libs']
-//            java.srcDirs = ['src/main/java', 'src/main/java-gen']
-//
-//            }
-//        }
 
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 
     dependencies {
         compile fileTree(include: ['*.jar'], dir: 'libs')

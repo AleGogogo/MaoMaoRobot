@@ -8,7 +8,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.lyw.maomaorobot.Adapter.TipsListViewAdapter;
+import com.example.lyw.maomaorobot.adapter.TipsListViewAdapter;
 import com.example.lyw.maomaorobot.Bean.TipsBean;
 import com.example.lyw.maomaorobot.DB.SaveTipMessageFile;
 import com.example.lyw.maomaorobot.R;
