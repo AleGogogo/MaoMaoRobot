@@ -30,7 +30,6 @@ import android.widget.Toast;
 
 import com.baidu.speech.VoiceRecognitionService;
 import com.baidu.yuyin.Constant;
-import com.example.lyw.maomaorobot.adapter.CheatMessageAdapter;
 import com.example.lyw.maomaorobot.Bean.SendMessage;
 import com.example.lyw.maomaorobot.Bean.TextResponseMessage;
 import com.example.lyw.maomaorobot.Bean.TulingMessage;
@@ -39,6 +38,7 @@ import com.example.lyw.maomaorobot.Profile;
 import com.example.lyw.maomaorobot.R;
 import com.example.lyw.maomaorobot.Util.CommonUtils;
 import com.example.lyw.maomaorobot.Util.MessageFilter;
+import com.example.lyw.maomaorobot.adapter.CheatMessageAdapter;
 import com.example.lyw.maomaorobot.net.HttpEngine;
 
 import org.json.JSONArray;
@@ -47,9 +47,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import static com.example.lyw.maomaorobot.Util.MessageFilter.MEMOREY;
+import static com.example.lyw.maomaorobot.Util.MessageFilter.OPEN_NOTE;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.SEARCH_KEY_WORDS;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.TAKE_PHOTO;
 
@@ -290,6 +290,30 @@ public class MainActivity extends Activity {
                 }
             }
         }));
+
+        mMessageFilter.addFilter(new MessageFilter.FilterItem(MEMOREY, new Runnable() {
+            @Override
+            public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            noteSomething(mMessageFilter.getCurrentMessage());
+                        }
+                    });
+            }
+        }));
+
+        mMessageFilter.addFilter(new MessageFilter.FilterItem(OPEN_NOTE, new Runnable() {
+            @Override
+            public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            openRemember();
+                        }
+                    });
+            }
+        }));
         mMessageFilter.addFilter(new MessageFilter.FilterItem(SEARCH_KEY_WORDS, new Runnable() {
             @Override
             public void run() {
@@ -305,6 +329,21 @@ public class MainActivity extends Activity {
                 }
             }
         }));
+    }
+
+    /**
+     * 添加提醒
+     * @param currentMessage
+     */
+    private void noteSomething(String currentMessage) {
+        Toast.makeText(this, currentMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 打开备忘录
+     */
+    private void openNote() {
+        Toast.makeText(this, "备忘录", Toast.LENGTH_SHORT).show();
     }
 
     private void searchOnWebView(String keyWord) {
@@ -550,16 +589,19 @@ public class MainActivity extends Activity {
 
                 break;
             case R.id.id_actionbar_remember: //打开备忘录
-                OnMenuOpenRemember();
+                openRemember();
 
         }
         return super.onOptionsItemSelected(item);
 
     }
 
-    private void OnMenuOpenRemember() {
-//        Intent intent = new Intent(MainActivity.this, com.example.lyw.maomaorobot.activity.TipsActivity.class);
-//        startActivity(intent);
+    /**
+     * 打开备忘录
+     */
+    private void openRemember() {
+        Intent intent = new Intent(MainActivity.this, com.example.lyw.maomaorobot.activity.NoteActivity.class);
+        startActivity(intent);
     }
 
     private void OnMenuVoiceSettingClick() {

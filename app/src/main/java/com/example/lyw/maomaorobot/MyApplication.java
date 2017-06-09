@@ -5,6 +5,8 @@ import android.app.Application;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import org.litepal.LitePal;
+
 /**
  * Created by LYW on 2016/6/13.
  */
@@ -17,5 +19,6 @@ public class MyApplication extends Application {
                 .writeDebugLogs()
                 .build();
         ImageLoader.getInstance().init(configuration);
+        LitePal.initialize(this);
     }
 }

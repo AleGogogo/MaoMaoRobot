@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin:'org.greenrobot.greendao'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 25
@@ -39,12 +39,18 @@ android {
         compile 'com.android.support:support-v4:25.0.1'
         compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
         compile group: 'com.google.code.gson', name: 'gson', version: '2.4'
-        compile'org.greenrobot:greendao:3.1.0'
-        compile'org.greenrobot:greendao-generator:3.1.0'
+//        compile 'org.greenrobot:greendao:3.1.0'
+//        compile 'org.greenrobot:greendao-generator:3.1.0'
+        compile 'org.litepal.android:core:1.5.1'
+
     }
-    greendao{
+    greendao {
         schemaVersion 1
-        daoPackage'com.example.lyw.greendao.gen'
-        targetGenDir'src/main/java'
+        daoPackage 'com.example.lyw.greendao.gen'
+        targetGenDir 'src/main/java'
     }
+}
+dependencies {
+    compile 'com.android.support:appcompat-v7:25.+'
+    compile 'com.android.support.constraint:constraint-layout:+'
 }

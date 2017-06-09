@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#eeeeee"
+    android:padding="8dp"
+    tools:context="com.example.lyw.maomaorobot.activity.NotePageActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffff"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <EditText
+            android:background="@null"
+            android:id="@+id/note_pager_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:hint="标题"
+            android:textColorHint="#55000000"
+            android:textColor="@color/colorWords"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#eeeeee"/>
+
+        <EditText
+            android:background="@null"
+            android:id="@+id/note_pager_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:gravity="start"
+            android:hint="内容"
+            android:textColorHint="#55000000"
+            android:textColor="@color/colorWords"/>
+
+    </LinearLayout>
+
+</FrameLayout>

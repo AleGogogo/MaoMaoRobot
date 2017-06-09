@@ -24,6 +24,10 @@ public class MessageFilter {
 
     public static final String[] TAKE_PHOTO = {"拍.{0,}照" , "开.{0,}相机"};
 
+    public static final String[] OPEN_NOTE = {".+备忘录"};
+
+    public static final String[] MEMOREY = {"提醒.+"};
+
     public static final String[] SEARCH_KEY_WORDS = {"搜索"};
 
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();

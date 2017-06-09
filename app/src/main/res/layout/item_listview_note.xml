@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:padding="15dp">
+
+    <TextView
+        android:id="@+id/item_note_title"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:lines="1"
+        android:text="标题"
+        android:textColor="#000000"
+        android:textSize="20dp"/>
+
+    <TextView
+        android:textColor="#5f000000"
+        android:id="@+id/item_note_des"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        android:text="记事本而不"/>
+
+    <TextView
+        android:id="@+id/item_note_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="06月03日 15:43"
+        android:textColor="#43b05c"
+        android:textSize="10dp"/>
+
+</LinearLayout>
