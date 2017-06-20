@@ -13,9 +13,6 @@ import android.widget.Toast;
 import com.example.lyw.maomaorobot.Bean.NoteItemBean;
 import com.example.lyw.maomaorobot.R;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class NotePageActivity extends Activity {
 
     private EditText mNotePagerTitle;
@@ -24,7 +21,6 @@ public class NotePageActivity extends Activity {
 
     private boolean isSaved;
 
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-DD-hh-mm");
 
 
     @Override
@@ -77,20 +73,24 @@ public class NotePageActivity extends Activity {
     private void onSaveClick() {
         final String inputTitle = mNotePagerTitle.getText().toString();
         final String inputContent = mNotePagerContent.getText().toString();
+        saveInfo(inputTitle, inputContent);
+    }
+
+    public void saveInfo(String inputTitle, String inputContent) {
         if (TextUtils.isEmpty(inputContent)){
             Toast.makeText(this, "没有输入任何内容,不保存!", Toast.LENGTH_SHORT).show();
             closePage();
             return;
         }
-        final String date = simpleDateFormat.format(new Date(System.currentTimeMillis()));
         NoteItemBean itemBean = new NoteItemBean(
                 TextUtils.isEmpty(inputTitle) ? "默认标题" : inputTitle,
-                inputContent , date);
+                inputContent , System.currentTimeMillis());
         itemBean.save();
         isSaved = true;
         Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
         closePage();
     }
+
 
     private void onCloseClick() {
         closePage();

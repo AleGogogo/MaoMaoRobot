@@ -6,8 +6,8 @@ import android.content.pm.PackageManager;
 import android.widget.ListView;
 
 import java.io.Closeable;
-import java.io.Console;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 /**
  * 这个类里面写一些通用的工具方法
@@ -19,6 +19,8 @@ import java.io.IOException;
  * Contact:<a href="mailto:8luerain@gmail.com">Contact_me_now</a>
  */
 public class CommonUtils {
+
+    public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
 
 
     /**

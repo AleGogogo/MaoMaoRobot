@@ -14,10 +14,10 @@ public class NoteItemBean extends DataSupport implements ICardAble {
 
    public String title;
     public String des;
-    public String date;
+    public long date;
 
 
-    public NoteItemBean(String title, String des, String date) {
+    public NoteItemBean(String title, String des, long date) {
         this.title = title;
         this.des = des;
         this.date = date;

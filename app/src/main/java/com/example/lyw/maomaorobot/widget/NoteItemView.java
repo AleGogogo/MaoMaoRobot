@@ -7,7 +7,10 @@ import android.widget.TextView;
 
 import com.example.lyw.maomaorobot.Bean.NoteItemBean;
 import com.example.lyw.maomaorobot.R;
+import com.example.lyw.maomaorobot.Util.CommonUtils;
 import com.example.lyw.maomaorobot.base.BaseCardView;
+
+import java.util.Date;
 
 /**
  * Created by bluerain on 17-6-9.
@@ -32,6 +35,6 @@ public class NoteItemView extends BaseCardView<NoteItemBean> {
     protected void onBind(View rootView, NoteItemBean data, LayoutInflater inflater) {
         mItemNoteTitle.setText(data.title);
         mItemNoteDes.setText(data.des);
-        mItemNoteDate.setText(data.date);
+        mItemNoteDate.setText(CommonUtils.simpleDateFormat.format(new Date(data.date)));
     }
 }
