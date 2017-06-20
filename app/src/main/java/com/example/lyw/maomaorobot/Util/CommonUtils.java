@@ -22,7 +22,7 @@ public class CommonUtils {
 
     public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
 
-
+    public static DispatchQueue queue = new DispatchQueue("Asyn");
     /**
      * 将Listview移动到最后一个位置
      */
@@ -37,7 +37,6 @@ public class CommonUtils {
         return intent.resolveActivity(packageManager) != null;
 
     }
-
 
     /**
      * 关闭资源

@@ -30,12 +30,14 @@ import android.widget.Toast;
 
 import com.baidu.speech.VoiceRecognitionService;
 import com.baidu.yuyin.Constant;
+import com.example.lyw.maomaorobot.Bean.NoteItemBean;
 import com.example.lyw.maomaorobot.Bean.SendMessage;
 import com.example.lyw.maomaorobot.Bean.TextResponseMessage;
 import com.example.lyw.maomaorobot.Bean.TulingMessage;
 import com.example.lyw.maomaorobot.DB.SaveTipMessageFile;
 import com.example.lyw.maomaorobot.Profile;
 import com.example.lyw.maomaorobot.R;
+import com.example.lyw.maomaorobot.Util.CommonFilter;
 import com.example.lyw.maomaorobot.Util.CommonUtils;
 import com.example.lyw.maomaorobot.Util.MessageFilter;
 import com.example.lyw.maomaorobot.adapter.CheatMessageAdapter;
@@ -297,7 +299,7 @@ public class MainActivity extends Activity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            noteSomething(mMessageFilter.getCurrentMessage());
+                            rememberSomething(mMessageFilter.getCurrentMessage());
                         }
                     });
             }
@@ -335,8 +337,16 @@ public class MainActivity extends Activity {
      * 添加提醒
      * @param currentMessage
      */
-    private void noteSomething(String currentMessage) {
-        Toast.makeText(this, currentMessage, Toast.LENGTH_SHORT).show();
+    private void rememberSomething(String currentMessage) {
+        final String date = CommonFilter.getInstance().getStringDate(currentMessage);
+        final String detail = CommonFilter.getInstance().getDetail(date, currentMessage);
+        if (!TextUtils.isEmpty(date) && !TextUtils.isEmpty(detail)) {
+            final NoteItemBean itemBean = new NoteItemBean("提醒","主人 , " + date + " 记得 " +detail+ "哦~~", System.currentTimeMillis() );
+            itemBean.save();
+            Toast.makeText(this, "备忘录添加成功", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "我似乎没法分析这句\" "+currentMessage+" \"" + " 囧 .....", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
