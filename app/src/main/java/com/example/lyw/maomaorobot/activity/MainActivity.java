@@ -340,7 +340,7 @@ public class MainActivity extends Activity {
         final String date = CommonFilter.getInstance().getStringDate(currentMessage);
         final String detail = CommonFilter.getInstance().getDetail(date, currentMessage);
         if (!TextUtils.isEmpty(date) && !TextUtils.isEmpty(detail)) {
-            final NoteItemBean itemBean = new NoteItemBean("提醒","主人 , " + date + " 记得 " +detail+ "哦~~", System.currentTimeMillis() );
+            final NoteItemBean itemBean = new NoteItemBean("提醒","主人,要记得 " + date + detail+ "哦~~", System.currentTimeMillis() );
             itemBean.save();
             Toast.makeText(this, "备忘录添加成功", Toast.LENGTH_SHORT).show();
         } else {
