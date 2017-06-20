@@ -48,7 +48,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static com.example.lyw.maomaorobot.Util.MessageFilter.MEMOREY;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.OPEN_NOTE;
@@ -767,10 +766,11 @@ public class MainActivity extends Activity {
                     ("results_recognition");
             //mLog.setText(Arrays.toString(data.toArray(new String[data.size
             // ()])));
-            String result = Arrays.toString(data.toArray(new String[data.size
-                    ()]));
-            handleInput(result);
-
+            StringBuilder builder = new StringBuilder();
+            for (String s : data) {
+                builder.append(s);
+            }
+            handleInput(builder.toString());
         }
 
         @Override
