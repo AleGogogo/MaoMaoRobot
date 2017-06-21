@@ -1,5 +1,7 @@
 package com.example.lyw.maomaorobot.Util;
 
+import android.text.TextUtils;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,10 +52,9 @@ public class CommonFilter {
      * @return
      */
     public String getDetail(String dateSplit, String input) {
-
+        if (TextUtils.isEmpty(dateSplit)) return null;
         final String[] split1 = input.split(dateSplit);
         if (split1.length > 1) return split1[1];
-
         return null;
     }
 

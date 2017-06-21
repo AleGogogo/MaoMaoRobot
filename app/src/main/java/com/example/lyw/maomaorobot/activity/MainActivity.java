@@ -344,6 +344,10 @@ public class MainActivity extends Activity {
             itemBean.save();
             Toast.makeText(this, "备忘录添加成功", Toast.LENGTH_SHORT).show();
         } else {
+            if (TextUtils.isEmpty(date)) {
+                Toast.makeText(this, "抱歉,您没有说时间,请重试~", Toast.LENGTH_SHORT).show();
+                return;
+            }
             Toast.makeText(this, "我似乎没法分析这句\" "+currentMessage+" \"" + " 囧 .....", Toast.LENGTH_SHORT).show();
         }
     }
