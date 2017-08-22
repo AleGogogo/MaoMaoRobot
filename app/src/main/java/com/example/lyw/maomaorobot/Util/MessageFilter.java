@@ -30,6 +30,9 @@ public class MessageFilter {
 
     public static final String[] SEARCH_KEY_WORDS = {"搜索"};
 
+    //智能家居命令
+    public static final String[] SMATE_HOME_OPEN_LIGHT = {"开灯"};
+
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
 
     private String mCurrentMessage;

@@ -40,6 +40,7 @@ import com.example.lyw.maomaorobot.R;
 import com.example.lyw.maomaorobot.Util.CommonFilter;
 import com.example.lyw.maomaorobot.Util.CommonUtils;
 import com.example.lyw.maomaorobot.Util.MessageFilter;
+import com.example.lyw.maomaorobot.Util.SmartHome;
 import com.example.lyw.maomaorobot.adapter.CheatMessageAdapter;
 import com.example.lyw.maomaorobot.net.HttpEngine;
 
@@ -52,6 +53,7 @@ import java.util.ArrayList;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.MEMOREY;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.OPEN_NOTE;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.SEARCH_KEY_WORDS;
+import static com.example.lyw.maomaorobot.Util.MessageFilter.SMATE_HOME_OPEN_LIGHT;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.TAKE_PHOTO;
 
 /**
@@ -295,24 +297,35 @@ public class MainActivity extends Activity {
         mMessageFilter.addFilter(new MessageFilter.FilterItem(MEMOREY, new Runnable() {
             @Override
             public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            rememberSomething(mMessageFilter.getCurrentMessage());
-                        }
-                    });
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        rememberSomething(mMessageFilter.getCurrentMessage());
+                    }
+                });
             }
         }));
 
         mMessageFilter.addFilter(new MessageFilter.FilterItem(OPEN_NOTE, new Runnable() {
             @Override
             public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            openRemember();
-                        }
-                    });
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        openRemember();
+                    }
+                });
+            }
+        }));
+        mMessageFilter.addFilter(new MessageFilter.FilterItem(SMATE_HOME_OPEN_LIGHT, new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SmartHome.getInstance(MainActivity.this).openLight();
+                    }
+                });
             }
         }));
         mMessageFilter.addFilter(new MessageFilter.FilterItem(SEARCH_KEY_WORDS, new Runnable() {
@@ -334,13 +347,14 @@ public class MainActivity extends Activity {
 
     /**
      * 添加提醒
+     *
      * @param currentMessage
      */
     private void rememberSomething(String currentMessage) {
         final String date = CommonFilter.getInstance().getStringDate(currentMessage);
         final String detail = CommonFilter.getInstance().getDetail(date, currentMessage);
         if (!TextUtils.isEmpty(date) && !TextUtils.isEmpty(detail)) {
-            final NoteItemBean itemBean = new NoteItemBean("提醒","主人,要记得 " + date + detail+ "哦~~", System.currentTimeMillis() );
+            final NoteItemBean itemBean = new NoteItemBean("提醒", "主人,要记得 " + date + detail + "哦~~", System.currentTimeMillis());
             itemBean.save();
             Toast.makeText(this, "备忘录添加成功", Toast.LENGTH_SHORT).show();
         } else {
@@ -348,7 +362,7 @@ public class MainActivity extends Activity {
                 Toast.makeText(this, "抱歉,您没有说时间,请重试~", Toast.LENGTH_SHORT).show();
                 return;
             }
-            Toast.makeText(this, "我似乎没法分析这句\" "+currentMessage+" \"" + " 囧 .....", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "我似乎没法分析这句\" " + currentMessage + " \"" + " 囧 .....", Toast.LENGTH_SHORT).show();
         }
     }
 
