@@ -37,6 +37,7 @@ import com.example.lyw.maomaorobot.Bean.TulingMessage;
 import com.example.lyw.maomaorobot.DB.SaveTipMessageFile;
 import com.example.lyw.maomaorobot.Profile;
 import com.example.lyw.maomaorobot.R;
+import com.example.lyw.maomaorobot.Util.AlarmUtils;
 import com.example.lyw.maomaorobot.Util.CommonFilter;
 import com.example.lyw.maomaorobot.Util.CommonUtils;
 import com.example.lyw.maomaorobot.Util.MessageFilter;
@@ -49,6 +50,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import static com.example.lyw.maomaorobot.Util.MessageFilter.MEMOREY;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.OPEN_NOTE;
@@ -356,6 +358,10 @@ public class MainActivity extends Activity {
         if (!TextUtils.isEmpty(date) && !TextUtils.isEmpty(detail)) {
             final NoteItemBean itemBean = new NoteItemBean("提醒", "主人,要记得 " + date + detail + "哦~~", System.currentTimeMillis());
             itemBean.save();
+            Calendar calendar = CommonFilter.getInstance().getCalendar(currentMessage);
+            if (null != calendar) {
+                AlarmUtils.startRemind(this, calendar, CommonFilter.getInstance().getDetail(currentMessage));
+            }
             Toast.makeText(this, "备忘录添加成功", Toast.LENGTH_SHORT).show();
         } else {
             if (TextUtils.isEmpty(date)) {
@@ -364,7 +370,9 @@ public class MainActivity extends Activity {
             }
             Toast.makeText(this, "我似乎没法分析这句\" " + currentMessage + " \"" + " 囧 .....", Toast.LENGTH_SHORT).show();
         }
+
     }
+
 
     /**
      * 打开备忘录

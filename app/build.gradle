@@ -3,7 +3,7 @@ apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "22.0.1"
+    buildToolsVersion '25.0.0'
 
 
 
@@ -42,6 +42,7 @@ android {
 //        compile 'org.greenrobot:greendao:3.1.0'
 //        compile 'org.greenrobot:greendao-generator:3.1.0'
         compile 'org.litepal.android:core:1.5.1'
+        compile 'com.mcxiaoke.volley:library:1.0.19'
 
     }
     greendao {

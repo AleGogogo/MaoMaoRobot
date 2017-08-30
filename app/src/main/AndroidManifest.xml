@@ -85,6 +85,7 @@
         <activity android:name=".activity.NoteActivity"/>
         <activity
             android:name=".activity.NotePageActivity"/>
+        <receiver android:name=".Util.AlarmUtils$AlarmReceiver" />
     </application>
 
 </manifest>
