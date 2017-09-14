@@ -67,7 +67,7 @@
         <!-- _______语音识别相关______   end -->
 
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.RobotActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -81,11 +81,13 @@
                 android:resource="@xml/searchable"/>
         </activity>
         <activity android:name=".activity.TipsActivity"/>
+        <activity android:name=".activity.MainActivity"/>
         <activity android:name=".activity.SecondActivity"/>
         <activity android:name=".activity.NoteActivity"/>
         <activity
             android:name=".activity.NotePageActivity"/>
-        <receiver android:name=".Util.AlarmUtils$AlarmReceiver" />
+
+        <receiver android:name=".Util.AlarmUtils$AlarmReceiver"/>
     </application>
 
 </manifest>

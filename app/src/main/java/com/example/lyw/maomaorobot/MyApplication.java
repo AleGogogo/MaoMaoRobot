@@ -2,6 +2,7 @@ package com.example.lyw.maomaorobot;
 
 import android.app.Application;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
@@ -20,5 +21,6 @@ public class MyApplication extends Application {
                 .build();
         ImageLoader.getInstance().init(configuration);
         LitePal.initialize(this);
+        Fresco.initialize(this);
     }
 }

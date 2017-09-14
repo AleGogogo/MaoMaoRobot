@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_centerInParent="true"
+        android:alpha="0.2"
+        android:src="@drawable/bg"/>
+
+    <TextView
+        android:id="@+id/bg_title"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:alpha="0.7"
+        android:gravity="center"
+        android:text="MAOMAO - ROBOT"
+        android:textColor="#0288cf"
+        android:textSize="28dp"/>
+
+    <ListView
+        android:id="@+id/id_listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/robot_mic"
+        android:layout_below="@+id/bg_title"
+        android:layout_marginBottom="28dp"
+        android:layout_weight="10"
+        android:divider="@null"
+        android:dividerHeight="5dp"/>
+
+    <ImageView
+        android:id="@+id/robot_mic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40dp"
+        android:alpha="0.8"
+        android:src="@drawable/mic"/>
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/gif_loading1"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="30dp"
+        android:layout_toLeftOf="@+id/robot_mic"/>
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/gif_loading2"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp"
+        android:layout_marginLeft="30dp"
+        android:layout_toRightOf="@+id/robot_mic"/>
+
+</RelativeLayout>
