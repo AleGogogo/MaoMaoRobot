@@ -30,7 +30,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.speech.VoiceRecognitionService;
+import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.yuyin.Constant;
+import com.example.lyw.maomaorobot.Bean.BaseResponseMessage;
 import com.example.lyw.maomaorobot.Bean.NoteItemBean;
 import com.example.lyw.maomaorobot.Bean.SendMessage;
 import com.example.lyw.maomaorobot.Bean.TextResponseMessage;
@@ -43,6 +45,7 @@ import com.example.lyw.maomaorobot.Util.CommonFilter;
 import com.example.lyw.maomaorobot.Util.CommonUtils;
 import com.example.lyw.maomaorobot.Util.MessageFilter;
 import com.example.lyw.maomaorobot.Util.SmartHome;
+import com.example.lyw.maomaorobot.Util.SpeakerUtils;
 import com.example.lyw.maomaorobot.adapter.CheatMessageAdapter;
 import com.example.lyw.maomaorobot.net.HttpEngine;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -101,6 +104,7 @@ public class RobotActivity extends Activity {
     private AnimationSet mAnimationSetMicBig;
     private SimpleDraweeView mLoading1;
     private SimpleDraweeView mLoading2;
+    private SpeechSynthesizer mSpeechSynthesizer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +125,7 @@ public class RobotActivity extends Activity {
         initData();
         initView();
         iniListener();
+        mSpeechSynthesizer = SpeakerUtils.getInstance(RobotActivity.this).initialTts();
 
     }
 
@@ -602,7 +607,11 @@ public class RobotActivity extends Activity {
                     @Override
                     public void onSuccess(String response) {
                         sendMessage.setHadResponse(true);
-                        mData.add(HttpEngine.serializeResponse(response));
+                        BaseResponseMessage baseResponseMessage = HttpEngine.serializeResponse(response);
+                        if (baseResponseMessage instanceof TextResponseMessage) {
+                            mSpeechSynthesizer.speak(((TextResponseMessage) baseResponseMessage).text);
+                        }
+                        mData.add(baseResponseMessage);
                         Message message = mHandler.obtainMessage();
                         message.what = HANDLER_MESSAGE_RESPONSE_SUCCESS;
                         mHandler.sendMessage(message);
