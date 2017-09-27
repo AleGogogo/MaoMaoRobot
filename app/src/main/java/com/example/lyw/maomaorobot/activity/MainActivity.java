@@ -55,7 +55,7 @@ import java.util.Calendar;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.MEMOREY;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.OPEN_NOTE;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.SEARCH_KEY_WORDS;
-import static com.example.lyw.maomaorobot.Util.MessageFilter.SMATE_HOME_OPEN_LIGHT;
+import static com.example.lyw.maomaorobot.Util.MessageFilter.SMATE_HOME_CUP_TMP;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.TAKE_PHOTO;
 
 /**
@@ -319,13 +319,13 @@ public class MainActivity extends Activity {
                 });
             }
         }));
-        mMessageFilter.addFilter(new MessageFilter.FilterItem(SMATE_HOME_OPEN_LIGHT, new Runnable() {
+        mMessageFilter.addFilter(new MessageFilter.FilterItem(SMATE_HOME_CUP_TMP, new Runnable() {
             @Override
             public void run() {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        SmartHome.getInstance(MainActivity.this).openLight();
+                        SmartHome.getInstance(MainActivity.this).getCPUTmp();
                     }
                 });
             }

@@ -1,7 +1,6 @@
 package com.example.lyw.maomaorobot.Util;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -15,7 +14,9 @@ import com.android.volley.toolbox.Volley;
  */
 
 public class SmartHome {
-    public static final String COMMAND_OPEN_LIGHT_URL = "http://1v77873a21.iok.la/iot/temp.php";
+    public static final String COMMAND_CPU_TMP_URL = "http://1v77873a21.iok.la/iot/temp.php";
+    public static final String COMMAND_OPEN_LIGHT_URL = "http://1v77873a21.iok.la/iot/setE.php/?key=eon";
+    public static final String COMMAND_CLOSE_LIGHT_URL = "http://1v77873a21.iok.la/iot/setE.php/?key=eoff";
 
     private static SmartHome INSTANCE;
     private final RequestQueue requestQueue;
@@ -34,8 +35,16 @@ public class SmartHome {
         return INSTANCE;
     }
 
+    public void getCPUTmp() {
+        StringRequest request = new StringRequest(COMMAND_CPU_TMP_URL, new ResponseListener(), new ErrorListener());
+        requestQueue.add(request);
+    }
     public void openLight() {
         StringRequest request = new StringRequest(COMMAND_OPEN_LIGHT_URL, new ResponseListener(), new ErrorListener());
+        requestQueue.add(request);
+    }
+    public void closeLight() {
+        StringRequest request = new StringRequest(COMMAND_CLOSE_LIGHT_URL, new ResponseListener(), new ErrorListener());
         requestQueue.add(request);
     }
 
