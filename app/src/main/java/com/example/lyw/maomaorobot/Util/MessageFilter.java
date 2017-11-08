@@ -37,6 +37,18 @@ public class MessageFilter {
 
     public static final String[] SMATE_HOME_CLOSE_LIGHT = {"关灯"};
 
+    public static final String[] SMATE_HOME_OPEN_FAN = {"开风扇"};
+
+    public static final String[] SMATE_HOME_CLOSE_FAN = {"关风扇"};
+
+    public static final String[] SMATE_HOME_OPEN_JIASHIQI = {"开加湿器"};
+
+    public static final String[] SMATE_HOME_CLOSE_JIASHIQI = {"关加湿器"};
+
+    public static final String[] SMATE_HOME_OPEN_MUSIC = {"打开音乐"};
+
+    public static final String[] SMATE_HOME_CLOSE_MUSIC = {"关闭音乐"};
+
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
 
     private String mCurrentMessage;

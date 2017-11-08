@@ -17,6 +17,15 @@ public class SmartHome {
     public static final String COMMAND_CPU_TMP_URL = "http://1v77873a21.iok.la/iot/temp.php";
     public static final String COMMAND_OPEN_LIGHT_URL = "http://1v77873a21.iok.la/iot/setE.php/?key=eon";
     public static final String COMMAND_CLOSE_LIGHT_URL = "http://1v77873a21.iok.la/iot/setE.php/?key=eoff";
+    //
+    public static final String COMMAND_OPEN_FAN_URL = "http://1v77873a21.iok.la/iot/setE.php?key=fon";
+    public static final String COMMAND_CLOSE_FAN_URL = "http://1v77873a21.iok.la/iot/setE.php?key=foff";
+    //
+    public static final String COMMAND_OPEN_JIASHIQI_URL = "http://1v77873a21.iok.la/iot/setE.php?key=lon";
+    public static final String COMMAND_CLOSE_JIASHIQI_URL = "http://1v77873a21.iok.la/iot/setE.php?key=loff";
+    //
+    public static final String COMMAND_OPEN_MUSIC_URL = "http://1v77873a21.iok.la/iot/setE.php?key=mon";
+    public static final String COMMAND_CLOSE_MUSIC_URL = "http://1v77873a21.iok.la/iot/setE.php?key=moff";
 
     private static SmartHome INSTANCE;
     private final RequestQueue requestQueue;
@@ -47,6 +56,35 @@ public class SmartHome {
         StringRequest request = new StringRequest(COMMAND_CLOSE_LIGHT_URL, new ResponseListener(), new ErrorListener());
         requestQueue.add(request);
     }
+
+    public void openFan() {
+        StringRequest request = new StringRequest(COMMAND_OPEN_FAN_URL, new ResponseListener(), new ErrorListener());
+        requestQueue.add(request);
+    }
+    public void closeFan() {
+        StringRequest request = new StringRequest(COMMAND_CLOSE_FAN_URL, new ResponseListener(), new ErrorListener());
+        requestQueue.add(request);
+    }
+
+
+    public void openJiashiqi() {
+        StringRequest request = new StringRequest(COMMAND_OPEN_JIASHIQI_URL, new ResponseListener(), new ErrorListener());
+        requestQueue.add(request);
+    }
+    public void closeJiashiqi() {
+        StringRequest request = new StringRequest(COMMAND_CLOSE_JIASHIQI_URL, new ResponseListener(), new ErrorListener());
+        requestQueue.add(request);
+    }
+
+    public void openMusic() {
+        StringRequest request = new StringRequest(COMMAND_OPEN_MUSIC_URL, new ResponseListener(), new ErrorListener());
+        requestQueue.add(request);
+    }
+    public void closeMusic() {
+        StringRequest request = new StringRequest(COMMAND_CLOSE_MUSIC_URL, new ResponseListener(), new ErrorListener());
+        requestQueue.add(request);
+    }
+
 
 
     private class ResponseListener implements Response.Listener<String> {

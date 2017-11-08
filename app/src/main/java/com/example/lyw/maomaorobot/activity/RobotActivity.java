@@ -61,9 +61,15 @@ import java.util.Calendar;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.MEMOREY;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.OPEN_NOTE;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.SEARCH_KEY_WORDS;
+import static com.example.lyw.maomaorobot.Util.MessageFilter.SMATE_HOME_CLOSE_FAN;
+import static com.example.lyw.maomaorobot.Util.MessageFilter.SMATE_HOME_CLOSE_JIASHIQI;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.SMATE_HOME_CLOSE_LIGHT;
+import static com.example.lyw.maomaorobot.Util.MessageFilter.SMATE_HOME_CLOSE_MUSIC;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.SMATE_HOME_CUP_TMP;
+import static com.example.lyw.maomaorobot.Util.MessageFilter.SMATE_HOME_OPEN_FAN;
+import static com.example.lyw.maomaorobot.Util.MessageFilter.SMATE_HOME_OPEN_JIASHIQI;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.SMATE_HOME_OPEN_LIGHT;
+import static com.example.lyw.maomaorobot.Util.MessageFilter.SMATE_HOME_OPEN_MUSIC;
 import static com.example.lyw.maomaorobot.Util.MessageFilter.TAKE_PHOTO;
 
 /**
@@ -338,6 +344,7 @@ public class RobotActivity extends Activity {
                 });
             }
         }));
+        //---------------开灯--------------
         mMessageFilter.addFilter(new MessageFilter.FilterItem(SMATE_HOME_OPEN_LIGHT, new Runnable() {
             @Override
             public void run() {
@@ -360,6 +367,80 @@ public class RobotActivity extends Activity {
                 });
             }
         }));
+        //---------------电风扇--------------
+
+        mMessageFilter.addFilter(new MessageFilter.FilterItem(SMATE_HOME_OPEN_FAN, new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SmartHome.getInstance(RobotActivity.this).openFan();
+                    }
+                });
+            }
+        }));
+        mMessageFilter.addFilter(new MessageFilter.FilterItem(SMATE_HOME_CLOSE_FAN, new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SmartHome.getInstance(RobotActivity.this).closeFan();
+                    }
+                });
+            }
+        }));
+
+        //---------------开加湿器--------------
+
+        mMessageFilter.addFilter(new MessageFilter.FilterItem(SMATE_HOME_OPEN_JIASHIQI, new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SmartHome.getInstance(RobotActivity.this).openJiashiqi();
+                    }
+                });
+            }
+        }));
+        mMessageFilter.addFilter(new MessageFilter.FilterItem(SMATE_HOME_CLOSE_JIASHIQI, new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SmartHome.getInstance(RobotActivity.this).closeJiashiqi();
+                    }
+                });
+            }
+        }));
+        //---------------开音乐--------------
+
+        mMessageFilter.addFilter(new MessageFilter.FilterItem(SMATE_HOME_OPEN_MUSIC, new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SmartHome.getInstance(RobotActivity.this).openMusic();
+                    }
+                });
+            }
+        }));
+        mMessageFilter.addFilter(new MessageFilter.FilterItem(SMATE_HOME_CLOSE_MUSIC, new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SmartHome.getInstance(RobotActivity.this).closeMusic();
+                    }
+                });
+            }
+        }));
+
         mMessageFilter.addFilter(new MessageFilter.FilterItem(SEARCH_KEY_WORDS, new Runnable() {
             @Override
             public void run() {
